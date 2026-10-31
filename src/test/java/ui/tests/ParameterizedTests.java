@@ -1,6 +1,7 @@
 package ui.tests;
 
 import io.qameta.allure.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +23,12 @@ import static com.codeborne.selenide.Condition.visible;
 @Tag("ui")
 public class ParameterizedTests extends TestBase {
 
-    MainPage mainPage = new MainPage();
+    private MainPage mainPage;
+
+    @BeforeEach
+    void initPage() {
+        mainPage = new MainPage();   // создаём ПОСЛЕ open() из TestBase
+    }
 
     static Stream<Arguments> checkCities() {
         return Stream.of(

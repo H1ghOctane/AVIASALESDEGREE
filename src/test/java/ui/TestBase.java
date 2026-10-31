@@ -22,32 +22,23 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() {
-        SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
-                .screenshots(true)
-                .savePageSource(true)
-                .includeSelenideSteps(true)
-        );
+        // ... (код Allure)
+
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
+        Configuration.headless = true; // Для Selenoid headless обязателен
 
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-features=AutoDeElevate");
-
-        // Проверяем, запущены ли мы в CI (Jenkins) или на Linux
-        String isJenkins = System.getenv("JENKINS_HOME");
-        boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
-
-        if (isJenkins != null || isLinux) {
-            // Включаем headless-режим для CI
-            Configuration.headless = true;
-            // Флаги для стабильной работы Chrome в Docker/Jenkins
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
+        // Если передан параметр -Dselenide.remote, Selenide будет использовать его
+        // Иначе локальный запуск
+        if (System.getProperty("selenide.remote") != null) {
+            Configuration.remote = System.getProperty("selenide.remote");
         }
 
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
         Configuration.browserCapabilities = options;
     }
 

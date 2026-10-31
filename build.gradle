@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version '2.11.2'
+}
+
+group = 'ru.aviasales'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+def allureVersion = "2.24.0",
+    selenideVersion = "7.16.0",
+    junitVersion = "5.10.1",
+    restAssuredVersion = "5.4.0",
+    ownerVersion = "1.0.12",
+    lombokVersion = "1.18.30"
+
+dependencies {
+    testImplementation(
+            platform("io.qameta.allure:allure-bom:$allureVersion"),
+            "org.junit.jupiter:junit-jupiter:$junitVersion",
+            "io.rest-assured:rest-assured:$restAssuredVersion",
+            "io.rest-assured:json-schema-validator:$restAssuredVersion",
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
+            "io.qameta.allure:allure-selenide:$allureVersion",
+            "com.codeborne:selenide:$selenideVersion",
+            "org.aeonbits.owner:owner:$ownerVersion",
+            "org.projectlombok:lombok:$lombokVersion",
+            "com.github.javafaker:javafaker:1.0.2",
+            "org.assertj:assertj-core:3.24.2",
+            "org.jspecify:jspecify:1.0.0",
+            "org.slf4j:slf4j-simple:2.0.13",
+            "com.codeborne:selenide-video-recorder:$selenideVersion"
+    )
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+}
+
+allure {
+    report {
+        version.set(allureVersion)
+    }
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            junit5 {
+                adapterVersion.set(allureVersion)
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperties(System.getProperties())
+    systemProperty 'file.encoding', 'UTF-8'
+    //   finalizedBy 'allureReport'
+}

@@ -22,32 +22,46 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() {
+        // Настройка Allure
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true)
                 .includeSelenideSteps(true)
         );
 
+        // Базовые настройки Selenide
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
-        Configuration.headless = true;
 
+        // Определяем окружение
+        boolean isJenkins = System.getenv("JENKINS_HOME") != null;
+        boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
+
+        // Включаем headless только в CI (Jenkins/Linux), чтобы локально видеть браузер
+        if (isJenkins || isLinux) {
+            Configuration.headless = true;
+        }
+
+        // Настройка ChromeOptions
         ChromeOptions options = new ChromeOptions();
 
-        // Читаем путь к браузеру из системного свойства, переданного из Jenkins
+        // Если из Jenkins передан путь к Chromium, применяем его
         String chromeBinary = System.getProperty("chrome.binary");
         if (chromeBinary != null && !chromeBinary.isEmpty()) {
             options.setBinary(chromeBinary);
-        } else {
-            // Локальный запуск (Windows/Mac)
-            // options.setBinary("C:/Program Files/Google/Chrome/Application/chrome.exe");
         }
 
+        // Базовые флаги для стабильной работы в Linux/Docker
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
+
+        // Дополнительные флаги для предотвращения падений в контейнерах
+        options.addArguments("--remote-debugging-port=9222");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-setuid-sandbox");
 
         Configuration.browserCapabilities = options;
     }

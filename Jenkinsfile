@@ -18,34 +18,36 @@ pipeline {
             }
         }
 
-        stage('Setup musl-ChromeDriver & ICU') {
+        stage('Setup ChromeDriver & ICU') {
             steps {
                 script {
                     sh '''
-                        echo "=== Скачивание musl-совместимого ChromeDriver и ICU для Alpine ==="
+                        echo "=== Поиск бинарника Chromium ==="
+                        ls -la /usr/bin/chromium* || true
+                        which chromium-browser || which chromium || true
+
+                        echo "=== Скачивание ChromeDriver 149 для Alpine ==="
                         mkdir -p drivers
 
-                        # 1. Скачиваем chromedriver из Alpine (musl-версия)
-                        wget -q -O /tmp/chromedriver.apk "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/chromium-chromedriver-136.0.7103.113-r0.apk"
+                        # Версия 149 соответствует Chromium в контейнере
+                        wget -q -O /tmp/chromedriver.apk "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/chromium-chromedriver-149.0.7827.53-r0.apk"
 
-                        # 2. Скачиваем библиотеки ICU (они нужны для запуска chromedriver)
+                        # Скачиваем ICU (версия 74 совместима с драйвером 149)
                         wget -q -O /tmp/icu-libs.apk "https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/icu-libs-74.2-r1.apk"
 
-                        # Распаковываем chromedriver
+                        # Распаковываем драйвер
                         mkdir -p /tmp/chromedriver_extracted
                         tar -xzf /tmp/chromedriver.apk -C /tmp/chromedriver_extracted
                         cp /tmp/chromedriver_extracted/usr/bin/chromedriver drivers/
                         chmod +x drivers/chromedriver
 
-                        # Распаковываем ICU-библиотеки в папку drivers/usr/lib
+                        # Распаковываем ICU
                         mkdir -p drivers/usr
                         tar -xzf /tmp/icu-libs.apk -C drivers/
 
-                        echo "=== Проверка: запускаем chromedriver с указанием LD_LIBRARY_PATH ==="
+                        echo "=== Проверка: chromedriver --version ==="
                         export LD_LIBRARY_PATH=$WORKSPACE/drivers/usr/lib:$LD_LIBRARY_PATH
                         ./drivers/chromedriver --version
-
-                        echo "=== Драйвер и библиотеки готовы ==="
                     '''
                 }
             }
@@ -63,10 +65,10 @@ pipeline {
                     testCommand += "-Dselenide.headless=true "
                     testCommand += "-Dselenide.browserSize=1920x1080 "
 
-                    // Указываем путь к musl-драйверу
+                    // Путь к скачанному драйверу 149
                     testCommand += "-Dwebdriver.chrome.driver=$WORKSPACE/drivers/chromedriver "
 
-                    // Указываем браузер Chromium
+                    // Указываем бинарник Chromium (проверьте вывод ls выше)
                     testCommand += "-Dchrome.binary=/usr/bin/chromium-browser "
 
                     // Отключаем Selenium Manager
@@ -78,7 +80,7 @@ pipeline {
                         testCommand += "-Dgroups=api"
                     }
 
-                    // Запускаем тесты с указанием LD_LIBRARY_PATH для ICU
+                    // Устанавливаем LD_LIBRARY_PATH для ICU
                     sh """
                         export LD_LIBRARY_PATH=$WORKSPACE/drivers/usr/lib:\$LD_LIBRARY_PATH
                         $testCommand

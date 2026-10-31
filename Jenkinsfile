@@ -18,27 +18,28 @@ pipeline {
             }
         }
 
-        stage('Setup ChromeDriver') {
+        stage('Setup musl-ChromeDriver') {
             steps {
                 script {
                     sh '''
-                        echo "=== Скачивание ChromeDriver ==="
+                        echo "=== Скачивание musl-совместимого ChromeDriver для Alpine ==="
                         mkdir -p drivers
 
-                        wget -q -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/149.0.7827.155/linux64/chromedriver-linux64.zip"
+                        # Скачиваем пакет chromium-chromedriver из репозитория Alpine
+                        wget -q -O /tmp/chromedriver.apk "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/chromium-chromedriver-136.0.7103.113-r0.apk"
 
-                        cd /tmp
-                        jar xf chromedriver.zip
+                        # Распаковываем .apk (это tar.gz) через tar (доступен в Alpine)
+                        mkdir -p /tmp/chromedriver_extracted
+                        tar -xzf /tmp/chromedriver.apk -C /tmp/chromedriver_extracted
 
-                        cd $WORKSPACE
-                        cp /tmp/chromedriver-linux64/chromedriver drivers/
+                        # Копируем бинарник из usr/bin/chromedriver в нашу папку drivers
+                        cp /tmp/chromedriver_extracted/usr/bin/chromedriver drivers/
                         chmod +x drivers/chromedriver
 
-                        echo "=== Проверка драйвера ==="
-                        file drivers/chromedriver
-                        ldd drivers/chromedriver || true
+                        echo "=== Проверка: запускаем chromedriver --version ==="
+                        ./drivers/chromedriver --version
 
-                        echo "=== Драйвер установлен: $WORKSPACE/drivers/chromedriver ==="
+                        echo "=== Драйвер готов: $WORKSPACE/drivers/chromedriver ==="
                     '''
                 }
             }
@@ -56,13 +57,13 @@ pipeline {
                     testCommand += "-Dselenide.headless=true "
                     testCommand += "-Dselenide.browserSize=1920x1080 "
 
-                    // 1. Указываем путь к драйверу
+                    // Указываем путь к распакованному musl-драйверу
                     testCommand += "-Dwebdriver.chrome.driver=$WORKSPACE/drivers/chromedriver "
 
-                    // 2. Жестко указываем путь к браузеру (чтобы Selenium не искал его сам)
+                    // Указываем браузер Chromium (он уже установлен в системе)
                     testCommand += "-Dchrome.binary=/usr/bin/chromium-browser "
 
-                    // 3. Отключаем Selenium Manager
+                    // Отключаем Selenium Manager, чтобы он не пытался скачать glibc-версию
                     testCommand += "-Dselenium.manager.enabled=false "
 
                     if (params.TEST_SUITE == 'ui') {

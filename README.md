@@ -43,6 +43,7 @@ src/test/java
 
 ### Allure-отчет (UI)
 ![Allure Report Overview](images/allure-overview.png)
+<img width="1280" height="652" alt="photo_2026-10-31_18-19-16" src="https://github.com/user-attachments/assets/d77b8aba-38f1-4d97-867b-fe9b1a28fc00" />
 
 ### Успешная сборка в Jenkins (API)
 ![Jenkins Build Success](images/jenkins-success.png)

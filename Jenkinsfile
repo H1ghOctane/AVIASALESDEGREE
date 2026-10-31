@@ -18,33 +18,16 @@ pipeline {
             }
         }
 
-        stage('Install Chrome') {
-            steps {
-                script {
-                    // Устанавливаем Google Chrome и библиотеки для работы в headless-режиме
-                    sh '''
-                        echo "Установка Chrome..."
-                        sudo apt-get update
-                        sudo apt-get install -y wget gnupg2 libnss3 libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
-
-                        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-                        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-                        sudo apt-get update
-                        sudo apt-get install -y google-chrome-stable
-                    '''
-                }
-            }
-        }
+        // Стадию Install Chrome мы УДАЛИЛИ, так как браузер уже есть на агенте
 
         stage('Run Tests') {
             steps {
                 script {
                     sh 'chmod +x gradlew'
 
-                    // Запускаем локально (без Selenoid), Selenide сам скачает драйвер
                     def testCommand = "./gradlew clean test "
 
-                    // Передаем параметры для Headless-режима
+                    // Указываем, что браузер - хромиум (или chrome)
                     testCommand += "-Dselenide.browser=chrome "
                     testCommand += "-Dselenide.headless=true "
                     testCommand += "-Dselenide.browserSize=1920x1080 "
@@ -55,7 +38,11 @@ pipeline {
                         testCommand += "-Dgroups=api"
                     }
 
-                    sh testCommand
+                    // САМОЕ ВАЖНОЕ: меняем HOME на папку воркспейса, чтобы Selenium мог скачать драйвер
+                    sh """
+                        export HOME=\$WORKSPACE
+                        $testCommand
+                    """
                 }
             }
         }

@@ -32,15 +32,19 @@ public class TestBase {
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
-
-        // Включаем headless (без окна), так как мы в Linux
         Configuration.headless = true;
 
         ChromeOptions options = new ChromeOptions();
-        // Указываем браузер Chromium, который есть в контейнере
-        options.setBinary("/usr/bin/chromium-browser");
 
-        // Флаги для стабильной работы в Docker
+        // Читаем путь к браузеру из системного свойства, переданного из Jenkins
+        String chromeBinary = System.getProperty("chrome.binary");
+        if (chromeBinary != null && !chromeBinary.isEmpty()) {
+            options.setBinary(chromeBinary);
+        } else {
+            // Локальный запуск (Windows/Mac)
+            // options.setBinary("C:/Program Files/Google/Chrome/Application/chrome.exe");
+        }
+
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");

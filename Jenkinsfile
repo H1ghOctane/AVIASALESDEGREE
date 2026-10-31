@@ -25,17 +25,18 @@ pipeline {
                         echo "=== Скачивание ChromeDriver ==="
                         mkdir -p drivers
 
-                        # Скачиваем версию 149, так как именно она установлена в контейнере
                         wget -q -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/149.0.7827.155/linux64/chromedriver-linux64.zip"
 
-                        # Распаковываем
                         cd /tmp
                         jar xf chromedriver.zip
 
-                        # Копируем и даем права
                         cd $WORKSPACE
                         cp /tmp/chromedriver-linux64/chromedriver drivers/
                         chmod +x drivers/chromedriver
+
+                        echo "=== Проверка драйвера ==="
+                        file drivers/chromedriver
+                        ldd drivers/chromedriver || true
 
                         echo "=== Драйвер установлен: $WORKSPACE/drivers/chromedriver ==="
                     '''
@@ -47,8 +48,6 @@ pipeline {
             steps {
                 script {
                     sh 'chmod +x gradlew'
-
-                    // ВАЖНО: останавливаем старый Gradle Daemon, чтобы он подхватил новые пути
                     sh './gradlew --stop || true'
 
                     def testCommand = "./gradlew clean test "
@@ -57,8 +56,14 @@ pipeline {
                     testCommand += "-Dselenide.headless=true "
                     testCommand += "-Dselenide.browserSize=1920x1080 "
 
-                    // Передаем путь к драйверу
+                    // 1. Указываем путь к драйверу
                     testCommand += "-Dwebdriver.chrome.driver=$WORKSPACE/drivers/chromedriver "
+
+                    // 2. Жестко указываем путь к браузеру (чтобы Selenium не искал его сам)
+                    testCommand += "-Dchrome.binary=/usr/bin/chromium-browser "
+
+                    // 3. Отключаем Selenium Manager
+                    testCommand += "-Dselenium.manager.enabled=false "
 
                     if (params.TEST_SUITE == 'ui') {
                         testCommand += "-Dgroups=ui"

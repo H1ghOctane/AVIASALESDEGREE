@@ -35,7 +35,14 @@ src/test/java
     ├── config      // api.properties, web.properties
     └── schemas     // countries-schema.json
 
+📸 Визуализация тестов
 
-Локальный запуск UI-тестов
-<img width="1280" height="652" alt="image" src="https://github.com/user-attachments/assets/f4bf319e-fc82-404c-88f4-2844f5f9ec2a" />
+### Локальный запуск UI-тестов
+![Локальный запуск UI-тестов](images/ui-tests-local.png)
+
+### Allure-отчет (UI)
+![Allure Report Overview](images/allure-overview.png)
+
+### Успешная сборка в Jenkins (API)
+![Jenkins Build Success](images/jenkins-success.png)
 

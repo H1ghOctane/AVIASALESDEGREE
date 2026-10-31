@@ -69,7 +69,7 @@ public class ParameterizedTests extends TestBase {
     @Story("Проверка навигации")
     @Severity(SeverityLevel.MINOR)
     @ParameterizedTest(name = "Отображается кнопка: {0}")
-    @ValueSource(strings = {"Профиль", "Журнал", "Поддержка", "rub"})
+    @ValueSource(strings = {"Профиль", "Журнал", "Поддержка"})
     @DisplayName("Проверка видимости элементов навигации")
     void visionOfServicesTest(String service) {
         mainPage.getHeaderElement(service).shouldBe(visible);

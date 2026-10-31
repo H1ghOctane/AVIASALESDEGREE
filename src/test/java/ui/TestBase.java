@@ -31,7 +31,7 @@ public class TestBase {
 
         // Базовые настройки Selenide
         Configuration.browserSize = "1920x1080";
-        Configuration.timeout = 10_000;
+        Configuration.timeout = 5_000;
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
 
@@ -62,6 +62,8 @@ public class TestBase {
         options.addArguments("--remote-debugging-port=9222");
         options.addArguments("--disable-extensions");
         options.addArguments("--disable-setuid-sandbox");
+        options.addArguments("--lang=ru-RU");
+        options.addArguments("--timezone=Europe/Moscow");
 
         Configuration.browserCapabilities = options;
     }

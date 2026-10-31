@@ -22,7 +22,6 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() {
-        // Allure
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true)
@@ -34,24 +33,18 @@ public class TestBase {
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
 
-        // Включаем headless (без окна), если мы в Jenkins или Linux
-        String isJenkins = System.getenv("JENKINS_HOME");
-        boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
-        if (isJenkins != null || isLinux) {
-            Configuration.headless = true;
-        }
-
-        // Если передан параметр -Dselenide.remote, используем удаленный драйвер
-        if (System.getProperty("selenide.remote") != null) {
-            Configuration.remote = System.getProperty("selenide.remote");
-        }
+        // Включаем headless (без окна), так как мы в Linux
+        Configuration.headless = true;
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox"); // Обязательно для Docker/root
-        options.addArguments("--disable-dev-shm-usage"); // Обязательно для Docker
-        options.addArguments("--disable-gpu"); // Полезно для стабильности в Linux
+        // Указываем браузер Chromium, который есть в контейнере
+        options.setBinary("/usr/bin/chromium-browser");
 
-        // ВОТ ЭТА СТРОКА БЫЛА ПРОПУЩЕНА:
+        // Флаги для стабильной работы в Docker
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+
         Configuration.browserCapabilities = options;
     }
 

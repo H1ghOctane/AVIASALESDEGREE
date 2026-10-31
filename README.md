@@ -38,7 +38,8 @@ src/test/java
 📸 Визуализация тестов
 
 ### Локальный запуск UI-тестов
-![Локальный запуск UI-тестов](images/ui-tests-local.png)
+![Локальный запуск UI-тестов]<img width="1280" height="652" alt="photo_2026-10-31_18-19-16" src="https://github.com/user-attachments/assets/de8fe343-8244-4e5f-a32b-5101dfd0767d" />
+
 
 ### Allure-отчет (UI)
 ![Allure Report Overview](images/allure-overview.png)

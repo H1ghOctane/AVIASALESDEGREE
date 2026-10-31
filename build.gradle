@@ -57,8 +57,12 @@ tasks.withType(JavaCompile) {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // По умолчанию запускаем всё
+        if (System.getProperty("groups") != null) {
+            includeTags System.getProperty("groups")
+        }
+    }
     systemProperties(System.getProperties())
     systemProperty 'file.encoding', 'UTF-8'
-    //   finalizedBy 'allureReport'
 }

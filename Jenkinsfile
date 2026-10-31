@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'TEST_SUITE', choices: ['all', 'ui', 'api'], description: 'Какие тесты запускать')
+        choice(name: 'TEST_SUITE', choices: ['api', 'all'], description: 'Какие тесты запускать в CI (UI не запускаем из-за защиты Aviasales)')
     }
 
     options {
-        timeout(time: 1, unit: 'HOURS')
+        timeout(time: 15, unit: 'MINUTES') // Ставим жесткий лимит
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
     }
@@ -18,73 +18,15 @@ pipeline {
             }
         }
 
-        stage('Setup ChromeDriver & ICU') {
-            steps {
-                script {
-                    sh '''
-                        echo "=== Поиск бинарника Chromium ==="
-                        ls -la /usr/bin/chromium* || true
-                        which chromium-browser || which chromium || true
-
-                        echo "=== Скачивание ChromeDriver 149 для Alpine ==="
-                        mkdir -p drivers
-
-                        # Версия 149 соответствует Chromium в контейнере
-                        wget -q -O /tmp/chromedriver.apk "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/chromium-chromedriver-149.0.7827.53-r0.apk"
-
-                        # Скачиваем ICU (версия 74 совместима с драйвером 149)
-                        wget -q -O /tmp/icu-libs.apk "https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/icu-libs-74.2-r1.apk"
-
-                        # Распаковываем драйвер
-                        mkdir -p /tmp/chromedriver_extracted
-                        tar -xzf /tmp/chromedriver.apk -C /tmp/chromedriver_extracted
-                        cp /tmp/chromedriver_extracted/usr/bin/chromedriver drivers/
-                        chmod +x drivers/chromedriver
-
-                        # Распаковываем ICU
-                        mkdir -p drivers/usr
-                        tar -xzf /tmp/icu-libs.apk -C drivers/
-
-                        echo "=== Проверка: chromedriver --version ==="
-                        export LD_LIBRARY_PATH=$WORKSPACE/drivers/usr/lib:$LD_LIBRARY_PATH
-                        ./drivers/chromedriver --version
-                    '''
-                }
-            }
-        }
-
-        stage('Run Tests') {
+        stage('Run API Tests') {
             steps {
                 script {
                     sh 'chmod +x gradlew'
-                    sh './gradlew --stop || true'
 
-                    def testCommand = "./gradlew clean test "
+                    // Запускаем только API-тесты по тегу
+                    def testCommand = "./gradlew clean test -Dgroups=api"
 
-                    testCommand += "-Dselenide.browser=chrome "
-                    testCommand += "-Dselenide.headless=true "
-                    testCommand += "-Dselenide.browserSize=1920x1080 "
-
-                    // Путь к скачанному драйверу 149
-                    testCommand += "-Dwebdriver.chrome.driver=$WORKSPACE/drivers/chromedriver "
-
-                    // Указываем бинарник Chromium (проверьте вывод ls выше)
-                    testCommand += "-Dchrome.binary=/usr/bin/chromium-browser "
-
-                    // Отключаем Selenium Manager
-                    testCommand += "-Dselenium.manager.enabled=false "
-
-                    if (params.TEST_SUITE == 'ui') {
-                        testCommand += "-Dgroups=ui"
-                    } else if (params.TEST_SUITE == 'api') {
-                        testCommand += "-Dgroups=api"
-                    }
-
-                    // Устанавливаем LD_LIBRARY_PATH для ICU
-                    sh """
-                        export LD_LIBRARY_PATH=$WORKSPACE/drivers/usr/lib:\$LD_LIBRARY_PATH
-                        $testCommand
-                    """
+                    sh testCommand
                 }
             }
         }
@@ -92,6 +34,7 @@ pipeline {
 
     post {
         always {
+            // Публикуем отчет Allure (даже если тесты упали)
             allure includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]
         }
     }

@@ -34,3 +34,7 @@ src/test/java
 └── resources
     ├── config      // api.properties, web.properties
     └── schemas     // countries-schema.json
+
+
+Локальный запуск UI-тестов
+<img width="1914" height="983" alt="image" src="https://github.com/user-attachments/assets/4ad3a90e-a951-4a55-8a98-a7309f1ebd2e" />

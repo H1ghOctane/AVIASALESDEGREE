@@ -3,8 +3,6 @@ pipeline {
 
     parameters {
         choice(name: 'TEST_SUITE', choices: ['all', 'ui', 'api'], description: 'Какие тесты запускать')
-        choice(name: 'BROWSER', choices: ['chrome', 'firefox'], description: 'Браузер для UI-тестов')
-        string(name: 'BROWSER_VERSION', defaultValue: '128.0', description: 'Версия браузера')
     }
 
     options {
@@ -20,28 +18,20 @@ pipeline {
             }
         }
 
-        stage('Start Selenoid') {
+        stage('Install Chrome') {
             steps {
                 script {
-                    // Создаем уникальную сеть для этого билда
-                    def networkName = "selenoid-network-${env.BUILD_NUMBER}"
-                    sh "docker network create ${networkName}"
+                    // Устанавливаем Google Chrome и библиотеки для работы в headless-режиме
+                    sh '''
+                        echo "Установка Chrome..."
+                        sudo apt-get update
+                        sudo apt-get install -y wget gnupg2 libnss3 libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
 
-                    // Запускаем Selenoid в этой сети
-                    sh """
-                        docker run -d --name selenoid \
-                          --network ${networkName} \
-                          -p 4444:4444 \
-                          -v /var/run/docker.sock:/var/run/docker.sock \
-                          -v ~/.aerokube/selenoid:/etc/selenoid \
-                          aerokube/selenoid:latest-release
-                    """
-
-                    // Ждем, пока Selenoid поднимется
-                    sh 'sleep 5'
-
-                    // Сохраняем имя сети для следующих шагов
-                    env.SELENOID_NETWORK = networkName
+                        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+                        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+                        sudo apt-get update
+                        sudo apt-get install -y google-chrome-stable
+                    '''
                 }
             }
         }
@@ -51,17 +41,13 @@ pipeline {
                 script {
                     sh 'chmod +x gradlew'
 
+                    // Запускаем локально (без Selenoid), Selenide сам скачает драйвер
                     def testCommand = "./gradlew clean test "
 
-                    // Передаем параметры для удаленного запуска в Selenoid
-                    testCommand += "-Dselenide.remote=http://selenoid:4444/wd/hub "
-                    testCommand += "-Dselenide.browser=${params.BROWSER} "
-                    testCommand += "-Dselenide.browserVersion=${params.BROWSER_VERSION} "
+                    // Передаем параметры для Headless-режима
+                    testCommand += "-Dselenide.browser=chrome "
                     testCommand += "-Dselenide.headless=true "
-
-                    // Передаем параметры для Owner
-                    testCommand += "-Dweb.baseUrl=https://www.aviasales.ru/ "
-                    testCommand += "-Dapi.baseUrl=https://api.travelpayouts.com "
+                    testCommand += "-Dselenide.browserSize=1920x1080 "
 
                     if (params.TEST_SUITE == 'ui') {
                         testCommand += "-Dgroups=ui"
@@ -69,7 +55,6 @@ pipeline {
                         testCommand += "-Dgroups=api"
                     }
 
-                    // Запускаем тесты. Они будут выполняться в контейнере с Selenoid
                     sh testCommand
                 }
             }
@@ -78,13 +63,6 @@ pipeline {
 
     post {
         always {
-            // Останавливаем и удаляем контейнер Selenoid, чистим сеть
-            script {
-                sh 'docker stop selenoid || true'
-                sh 'docker rm selenoid || true'
-                sh "docker network rm ${env.SELENOID_NETWORK} || true"
-            }
-            // Публикуем отчет Allure
             allure includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]
         }
     }

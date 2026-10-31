@@ -22,23 +22,36 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() {
-        // ... (код Allure)
+        // Allure
+        SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
+                .screenshots(true)
+                .savePageSource(true)
+                .includeSelenideSteps(true)
+        );
 
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
-        Configuration.headless = true; // Для Selenoid headless обязателен
 
-        // Если передан параметр -Dselenide.remote, Selenide будет использовать его
-        // Иначе локальный запуск
+        // Включаем headless (без окна), если мы в Jenkins или Linux
+        String isJenkins = System.getenv("JENKINS_HOME");
+        boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
+        if (isJenkins != null || isLinux) {
+            Configuration.headless = true;
+        }
+
+        // Если передан параметр -Dselenide.remote, используем удаленный драйвер
         if (System.getProperty("selenide.remote") != null) {
             Configuration.remote = System.getProperty("selenide.remote");
         }
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox"); // Обязательно для Docker/root
+        options.addArguments("--disable-dev-shm-usage"); // Обязательно для Docker
+        options.addArguments("--disable-gpu"); // Полезно для стабильности в Linux
+
+        // ВОТ ЭТА СТРОКА БЫЛА ПРОПУЩЕНА:
         Configuration.browserCapabilities = options;
     }
 

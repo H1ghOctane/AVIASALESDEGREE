@@ -22,28 +22,27 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() {
-        SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
-                .screenshots(true)
-                .savePageSource(true)
-                .includeSelenideSteps(true)
-        );
+        // ... (код Allure)
+
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 60_000;
         Configuration.pageLoadStrategy = "eager";
+
+        // Включаем headless-режим автоматически, если мы в Jenkins (или Linux)
+        String isJenkins = System.getenv("JENKINS_HOME");
+        if (isJenkins != null || System.getProperty("os.name").toLowerCase().contains("linux")) {
+            Configuration.headless = true;
+        }
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-features=AutoDeElevate");
+
+        // Флаги для стабильной работы в Docker/Jenkins
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+
         Configuration.browserCapabilities = options;
-    }
-
-    @BeforeEach
-    void setUpUrl() {
-        // Передаем URL из конфига
-        open(webConfig.baseUrl());
-    }
-
-    @AfterEach
-    void tearDown() {
-        closeWebDriver();
     }
 }

@@ -2,41 +2,41 @@ pipeline {
     agent any
 
     tools {
-        // Укажите имя JDK в вашем Jenkins (например, 'jdk17' или 'java')
         jdk 'jdk17'
     }
 
     parameters {
-        choice(name: 'BROWSER', choices: ['chrome', 'firefox', 'edge'], description: 'Выберите браузер для UI-тестов')
-        string(name: 'BASE_URL', defaultValue: 'https://www.aviasales.ru/', description: 'URL для UI-тестов')
-        string(name: 'API_BASE_URL', defaultValue: 'https://api.travelpayouts.com', description: 'URL для API-тестов')
-        password(name: 'API_TOKEN', defaultValue: '', description: 'Токен для API Aviasales')
         choice(name: 'TEST_SUITE', choices: ['all', 'ui', 'api'], description: 'Какие тесты запускать')
     }
 
     options {
-        // Ограничение на время выполнения (защита от зависаний)
         timeout(time: 1, unit: 'HOURS')
-        // Сохранять только 10 последних сборок
         buildDiscarder(logRotator(numToKeepStr: '10'))
-        // Добавить метку времени в консоль
         timestamps()
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Получаем код из Git
                 checkout scm
             }
         }
 
-        stage('Preparation') {
+        stage('Install Chrome Dependencies') {
             steps {
                 script {
-                    // Даем права на выполнение gradlew (важно для Linux-агентов)
-                    sh 'chmod +x gradlew'
-                    echo "Запуск тестов: ${params.TEST_SUITE} в браузере ${params.BROWSER}"
+                    // Устанавливаем Google Chrome и библиотеки для работы в headless-режиме
+                    // Работает для агентов на базе Ubuntu/Debian
+                    sh '''
+                        echo "Установка зависимостей для Chrome..."
+                        sudo apt-get update
+                        sudo apt-get install -y wget gnupg2 libnss3 libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
+
+                        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+                        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+                        sudo apt-get update
+                        sudo apt-get install -y google-chrome-stable
+                    '''
                 }
             }
         }
@@ -44,22 +44,31 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Формируем команду в зависимости от выбранного набора тестов
+                    sh 'chmod +x gradlew'
+
+                    // Формируем команду
                     def testCommand = "./gradlew clean test "
 
-                    // Передаем параметры через -D (Selenide и Owner их подхватят)
-                    testCommand += "-Dselenide.browser=${params.BROWSER} "
-                    testCommand += "-Dweb.baseUrl=${params.BASE_URL} "
-                    testCommand += "-Dapi.baseUrl=${params.API_BASE_URL} "
-                    testCommand += "-Dapi.token=${params.API_TOKEN} "
+                    // Передаем параметры для Selenide
+                    testCommand += "-Dselenide.browser=chrome "
+                    testCommand += "-Dselenide.headless=true "
+                    testCommand += "-Dselenide.browserSize=1920x1080 "
+
+                    // Передаем параметры для Owner (если нужно переопределить URL)
+                    testCommand += "-Dweb.baseUrl=https://www.aviasales.ru/ "
+                    testCommand += "-Dapi.baseUrl=https://api.travelpayouts.com "
+
+                    // Если токен хранится в Credentials Jenkins, раскомментируйте и настройте:
+                    // withCredentials([string(credentialsId: 'aviasales-api-token', variable: 'API_TOKEN')]) {
+                    //     testCommand += "-Dapi.token=\${API_TOKEN} "
+                    // }
 
                     if (params.TEST_SUITE == 'ui') {
-                        testCommand += "-Dtags=ui"
+                        testCommand += "-Dgroups=ui"
                     } else if (params.TEST_SUITE == 'api') {
-                        testCommand += "-Dtags=api"
+                        testCommand += "-Dgroups=api"
                     }
 
-                    // Запускаем тесты
                     sh testCommand
                 }
             }
@@ -68,10 +77,7 @@ pipeline {
 
     post {
         always {
-            // Генерация и публикация Allure-отчета (требует установленного плагина Allure в Jenkins)
             allure includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]
-
-            // Очистка рабочего пространства (опционально)
             cleanWs()
         }
     }

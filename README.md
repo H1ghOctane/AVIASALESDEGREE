@@ -38,7 +38,7 @@ src/test/java
 📸 Визуализация тестов
 
 ### Локальный запуск UI-тестов
-![Локальный запуск UI-тестов](images/allure-report.png)
+![Локальный запуск UI-тестов](images/ui-local-allure.png)
 
 
 ### Allure-отчет (UI)

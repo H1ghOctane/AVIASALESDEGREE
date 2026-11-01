@@ -1,6 +1,7 @@
 package ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -10,23 +11,31 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class MainPage {
 
-    public SelenideElement getServiceLink(String serviceName) {
-        return $$("a").findBy(text(serviceName));
+    private final SelenideElement body = $("body");
+
+    @Step("Открыть сервис «{serviceName}»")
+    public MainPage openService(String serviceName) {
+        $$("a").findBy(text(serviceName)).click();
+        return this;
     }
 
-    public void clickService(String serviceName) {
-        getServiceLink(serviceName).click();
+    @Step("Проверить, что на странице есть текст «{expectedText}»")
+    public MainPage checkPageHasText(String expectedText) {
+        body.shouldHave(text(expectedText));
+        return this;
     }
 
-    public SelenideElement getCityElement(String cityName) {
-        return $$("a, button, h2, h3, span").findBy(text(cityName));
+    @Step("Проверить, что элемент меню «{elementName}» отображается")
+    public MainPage checkHeaderElementVisible(String elementName) {
+        $(byText(elementName)).shouldBe(visible);
+        return this;
     }
 
-    public SelenideElement getBody() {
-        return $("body");
-    }
-
-    public SelenideElement getHeaderElement(String elementName) {
-        return $(byText(elementName));
+    @Step("Проверить, что на странице отображается город «{cityName}»")
+    public MainPage checkCityVisible(String cityName) {
+        $$("a, button, h2, h3, span").findBy(text(cityName))
+                .scrollTo()
+                .shouldBe(visible);
+        return this;
     }
 }

@@ -4,48 +4,45 @@ import api.models.Country;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static api.specs.ApiSpec.requestSpec;
-import static api.specs.ApiSpec.responseSpec200;
+import static api.specs.ApiSpecs.responseSpec;
+import static api.specs.ApiSpecs.travelpayoutsRequestSpec;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Epic("Aviasales API")
-@Feature("Поиск стран")
+@Feature("Справочники")
+@Story("Поиск страны в списке")
+@Owner("H1ghOctane")
 @Tag("api")
 public class CountrySearchTest {
 
-    @Test
-    @Story("Поиск по названию")
-    @DisplayName("GET /data/ru/countries.json — список содержит Россию")
+    @ParameterizedTest(name = "Список содержит страну {0} с кодом {1}")
+    @CsvSource({
+            "Россия, RU",
+            "Германия, DE",
+            "Франция, FR"
+    })
     @Severity(SeverityLevel.NORMAL)
-    void searchCountriesByName() {
-        // Искомая страна
-        String expectedCountry = "Россия";
-
-        // Запрашиваем полный список (API не поддерживает поиск через query param)
+    @DisplayName("GET /data/ru/countries.json — список содержит страну")
+    void listContainsCountryTest(String name, String code) {
         List<Country> countries = given()
-                .spec(requestSpec)
+                .spec(travelpayoutsRequestSpec)
                 .when()
                 .get("/data/ru/countries.json")
                 .then()
-                .spec(responseSpec200)
+                .spec(responseSpec(200))
                 .extract()
                 .jsonPath()
                 .getList(".", Country.class);
 
-        // Извлекаем только названия стран
-        List<String> countryNames = countries.stream()
-                .map(Country::getName)
-                .collect(Collectors.toList());
-
-        // Проверяем, что в списке есть "Россия"
-        assertThat(countryNames)
-                .as("Результаты поиска должны содержать искомую страну")
-                .anyMatch(name -> name.contains(expectedCountry));
+        assertThat(countries)
+                .filteredOn(country -> code.equals(country.getCode()))
+                .extracting(Country::getName)
+                .containsExactly(name);
     }
 }

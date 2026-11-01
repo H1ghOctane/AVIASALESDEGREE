@@ -1,4 +1,4 @@
-package ui;
+package ui.data;
 
 public enum CityEnum {
 

@@ -13,8 +13,6 @@ import ui.config.WebConfig;
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
 
-// УБРАЛИ @ExtendWith(VideoRecorderExtension.class) - это вызывает зависание!
-
 public class TestBase {
 
     private static final WebConfig webConfig = ConfigFactory.create(WebConfig.class, System.getProperties());
@@ -28,7 +26,6 @@ public class TestBase {
         );
 
         Configuration.browserSize = "1920x1080";
-        // УМЕНЬШИЛИ ТАЙМАУТЫ, чтобы не ждать минуту при падении
         Configuration.timeout = 5_000;
         Configuration.pageLoadTimeout = 20_000;
         Configuration.pageLoadStrategy = "eager";
@@ -40,15 +37,11 @@ public class TestBase {
             options.setBinary(chromeBinary);
         }
 
-        // Современный режим headless
         options.addArguments("--headless=new");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
-
-        // Скрываем, что мы робот (Aviasales может блокировать)
         options.addArguments("--disable-blink-features=AutomationControlled");
-
         Configuration.browserCapabilities = options;
     }
 

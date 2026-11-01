@@ -38,8 +38,6 @@ public class ApiSpecs {
         return new RequestSpecBuilder()
                 .setBaseUri(baseUri)
                 .setContentType(ContentType.JSON)
-                // Строго один тип: ContentType.JSON шлёт в Accept список из четырёх типов,
-                // и restful-booker отвечает на POST /booking статусом 418
                 .setAccept("application/json")
                 .addFilter(withCustomTemplates())
                 .build();

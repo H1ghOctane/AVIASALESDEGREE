@@ -21,16 +21,15 @@ pipeline {
     stages {
         stage('Run tests') {
             steps {
-                // Параметры типа password Jenkins передаёт в переменные окружения и маскирует в логе
+                // TRAVELPAYOUTS_TOKEN и REMOTE_URL не передаются через -D: Jenkins печатает команду целиком.
+                // Gradle берёт их из переменных окружения (см. build.gradle)
                 sh '''
                     chmod +x gradlew
                     ./gradlew clean "$TASK" \
-                        -Dtravelpayouts.token="$TRAVELPAYOUTS_TOKEN" \
                         -Dbrowser="$BROWSER" \
                         -DbrowserVersion="$BROWSER_VERSION" \
                         -DbrowserSize="$BROWSER_SIZE" \
                         -Dheadless="$HEADLESS" \
-                        -DremoteUrl="$REMOTE_URL" \
                         -DvideoStorage="$VIDEO_STORAGE"
                 '''
             }

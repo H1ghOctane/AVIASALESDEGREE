@@ -1,65 +1,50 @@
-## 👤 Автор
-**H1ghOctane**
-[Мой профиль на GitHub](https://github.com/H1ghOctane)
+🛫 Aviasales UI & API Tests
 
----
+Репозиторий содержит тесты для веб-интерфейса и API Aviasales, а также конфигурацию Jenkins Pipeline для запуска в CI
 
-# 🛫 Дипломный проект QA.GURU: Автоматизация тестирования Aviasales (UI + API)
+Мобильные тесты вынесены в отдельный репозиторий: [MOBILEREST](https://github.com/H1ghOctane/MOBILEREST) (тестирование Wikipedia через Appium/BrowserStack)
 
-Данный репозиторий содержит дипломный проект по автоматизации тестирования веб-интерфейса и API сайта [Aviasales](https://www.aviasales.ru/), а также настроенный CI/CD пайплайн.
+✅ Стек
+- Java 17
+- Gradle
+- JUnit 5
+- Selenide
+- REST Assured
+- Owner
+- Lombok
+- AssertJ
+- Allure Report
+- Jenkins
 
-> **Мобильная автоматизация:** Мобильные тесты вынесены в [отдельный репозиторий](https://github.com/H1ghOctane/MOBILEREST), так как они нацелены на демонстрацию работы с нативными приложениями (на примере Wikipedia) и используют другой стек драйверов.
-
----
-
-## 🛠 Технологический стек
-
-*   **Java 17** — язык программирования
-*   **Gradle** — система сборки
-*   **JUnit 5** — фреймворк для тестирования (параметризация, теги)
-*   **Selenide** — автоматизация UI (паттерн Page Object)
-*   **REST Assured** — тестирование API (валидация JSON-схем, спецификации)
-*   **Owner** — управление конфигурацией (чтение `.properties`)
-*   **Lombok** — генерация кода для моделей API
-*   **AssertJ** — читаемые ассерты
-*   **Allure Report** — отчетность (шаги, скриншоты, логи запросов)
-*   **Jenkins** — CI/CD пайплайн
-
----
-
-## ✅ Реализованные проверки
-
-### 
-В классе `` реализованы:
-1.  **Проверка сервисов:** проверка отображения текстовых описаний при клике на «Избранное», «Впечатления», «Авиабилеты» и т.д. (параметризация `@CsvSource`).
-2.  **Проверка городов:** проверка наличия нужных городов в выпадающем списке (параметризация `@MethodSource` + `Enum`).
-3.  **Проверка навигации:** проверка видимости кнопок (параметризация `@ValueSource`).
-*   *Используется паттерн **Page Object** (`ui.pages.MainPage`).*
-
-### API
-В классах `api.tests.*` реализованы:
-1.  **`CountriesTest`**: запрос списка стран, проверка, что список не пуст.
-2.  **`CountrySchemaTest`**: контрактное тестирование. Проверка ответа на соответствие JSON-схеме (`countries-schema.json`).
-3.  **`CountrySearchTest`**: проверка наличия конкретной страны в ответе.
-*   *Используются Request/Response спецификации, модели POJO (Lombok), вынос токена в конфиг.*
-
----
-
-## 📁 Структура проекта
+📁 Структура
 
 ```text
 src/test/java
 ├── api
-│   ├── config      # Конфигурация API (Owner)
-│   ├── models      # POJO модели (Country)
-│   ├── specs       # Спецификации REST Assured
-│   └── tests       # API тесты
-├── config          # WebConfig
+│   ├── config      // ApiConfig (Owner)
+│   ├── models      // Country (Lombok)
+│   ├── specs       // RequestSpec, ResponseSpec
+│   └── tests       // CountriesTest, CountrySchemaTest, CountrySearchTest
+├── config          // WebConfig
 ├── ui
-│   ├── pages       # Page Object (MainPage)
-│   ├── tests       # UI тесты
-│   ├── CityEnum    # Enum с городами
-│   └── TestBase    # Настройка браузера
+│   ├── pages       // MainPage
+│   ├── tests       // ParameterizedTests
+│   ├── CityEnum
+│   └── TestBase
 └── resources
-    ├── config      # Файлы .properties
-    └── schemas     # JSON-схемы для валидации
+    ├── config      // api.properties, web.properties
+    └── schemas     // countries-schema.json
+
+📸 Визуализация тестов
+
+### Локальный запуск UI-тестов
+![Локальный запуск UI-тестов](images/ui-local-allure.png)
+
+
+### Allure-отчет (UI)
+![Allure Report Overview](images/allure-overview.png)
+
+
+### Успешная сборка в Jenkins (API)
+![Jenkins Build Success](images/jenkins-success.png)
+

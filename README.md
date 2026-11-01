@@ -16,35 +16,12 @@
 - Allure Report
 - Jenkins
 
-📁 Структура
-
-```text
-src/test/java
-├── api
-│   ├── config      // ApiConfig (Owner)
-│   ├── models      // Country (Lombok)
-│   ├── specs       // RequestSpec, ResponseSpec
-│   └── tests       // CountriesTest, CountrySchemaTest, CountrySearchTest
-├── config          // WebConfig
-├── ui
-│   ├── pages       // MainPage
-│   ├── tests       // ParameterizedTests
-│   ├── CityEnum
-│   └── TestBase
-└── resources
-    ├── config      // api.properties, web.properties
-    └── schemas     // countries-schema.json
-
 📸 Визуализация тестов
-
-### Локальный запуск UI-тестов
-![Локальный запуск UI-тестов](images/ui-local-allure.png)
 
 
 ### Allure-отчет (UI)
-![Allure Report Overview](images/allure-overview.png)
+![Локальный запуск UI-тестов](images/ui-local-allure.png)
 
 
 ### Успешная сборка в Jenkins (API)
-![Jenkins Build Success](images/jenkins-success.png)
-
+![Jenkins Build Success](images/api-allure-jankins.jpg)

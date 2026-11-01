@@ -18,10 +18,9 @@
 
 📸 Визуализация тестов
 
+### Успешная сборка в Jenkins (API)
+https://jenkins.qa.guru/job/try/18/allure/
+![Jenkins Build Success](images/api-allure-jankins.jpg)
 
 ### Allure-отчет (UI)
 ![Локальный запуск UI-тестов](images/ui-local-allure.png)
-
-
-### Успешная сборка в Jenkins (API)
-![Jenkins Build Success](images/api-allure-jankins.jpg)

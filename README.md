@@ -25,4 +25,3 @@ https://jenkins.qa.guru/job/try/18/allure/
 ### Успешная сборка в Jenkins (UI)
 ![Jenkins Build Success]([images/ui-local-allure.png]
 https://jenkins.qa.guru/job/UI-TESTS-H1GHOCTANE/2/allure/#behaviors/47feb2ef721e1fc00921e74ad081fcb4/ea03a0b71e9904d7/
-(https://github.com/H1ghOctane/AVIASALESDEGREE/issues/1)

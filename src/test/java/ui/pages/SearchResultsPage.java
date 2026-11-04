@@ -8,6 +8,7 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.CollectionCondition.noneMatch;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
+import static com.codeborne.selenide.Condition.checked;
 import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
@@ -44,9 +45,14 @@ public class SearchResultsPage {
 
     @Step("Оставить в фильтре «Пересадки» только прямые рейсы")
     public SearchResultsPage applyDirectFlightsFilter() {
-        transfersFilter.shouldBe(visible)
-                .$("[data-test-id='set-filter-row-0']")
-                .click();
+        transfersFilter.shouldBe(visible).scrollIntoView("{block: 'center'}");
+        for (SelenideElement row : transfersFilter.$$("[data-test-id^='set-filter-row-']").asFixedIterable()) {
+            boolean isDirect = "set-filter-row-0".equals(row.getAttribute("data-test-id"));
+            if (row.$("input").isSelected() != isDirect) {
+                row.click();
+            }
+        }
+        transfersFilter.$("[data-test-id='set-filter-row-0'] input").shouldBe(checked);
         return this;
     }
 

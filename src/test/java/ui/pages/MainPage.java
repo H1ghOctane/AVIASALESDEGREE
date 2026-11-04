@@ -8,13 +8,18 @@ import ui.pages.components.CalendarComponent;
 import ui.pages.components.HeaderComponent;
 import ui.pages.components.PassengersComponent;
 
+import java.time.Duration;
 import java.time.LocalDate;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.urlContaining;
+import static ui.helpers.Waits.appears;
+import static ui.helpers.Waits.openPanel;
 
 public class MainPage {
+
+    private static final Duration SUGGESTIONS_TIMEOUT = Duration.ofSeconds(10);
 
     private final SelenideElement form = $("[data-test-id='avia-form']");
     private final SelenideElement originInput = form.$("[data-test-id='origin-input']");
@@ -27,6 +32,7 @@ public class MainPage {
     private final SelenideElement hotelsCheckbox = $("[data-test-id='hotels-checkbox']");
     private final SelenideElement submitButton = form.$("[data-test-id='form-submit']");
     private final ElementsCollection suggestions = $$("[data-test-id^='suggested-city-']");
+    private final SelenideElement focusedInput = $("input:focus");
 
     private final HeaderComponent header = new HeaderComponent();
     private final CalendarComponent calendar = new CalendarComponent();
@@ -45,21 +51,19 @@ public class MainPage {
 
     @Step("Указать город вылета «{city}»")
     public MainPage setOrigin(String city) {
-        typeCity(originInput, city);
-        suggestions.findBy(text(city)).click();
+        chooseCity(originInput, "origin", city);
         return this;
     }
 
     @Step("Указать город прибытия «{city}»")
     public MainPage setDestination(String city) {
-        typeCity(destinationInput, city);
-        suggestions.findBy(text(city)).click();
+        chooseCity(destinationInput, "destination", city);
         return this;
     }
 
     @Step("Ввести в поле «Куда» начало названия «{prefix}»")
     public MainPage typeDestination(String prefix) {
-        typeCity(destinationInput, prefix);
+        typeCity(destinationInput, "destination", prefix);
         return this;
     }
 
@@ -71,24 +75,24 @@ public class MainPage {
 
     @Step("Выбрать дату вылета {date} без обратного билета")
     public MainPage setOneWayDate(LocalDate date) {
-        departDateField.click();
+        calendar.openWith(departDateField, date);
         calendar.selectDate(date);
-        calendar.close();
+        calendar.confirm();
         return this;
     }
 
     @Step("Выбрать даты: туда {departDate}, обратно {returnDate}")
     public MainPage setRoundTripDates(LocalDate departDate, LocalDate returnDate) {
-        departDateField.click();
+        calendar.openWith(departDateField, departDate);
         calendar.selectDate(departDate);
         calendar.selectDate(returnDate);
+        calendar.confirm();
         return this;
     }
 
     @Step("Указать взрослых пассажиров: {adults}")
     public MainPage setAdults(int adults) {
-        passengersField.click();
-        passengers.setAdults(adults);
+        passengers.setAdults(passengersField, adults);
         return this;
     }
 
@@ -137,8 +141,17 @@ public class MainPage {
         }
     }
 
-    private void typeCity(SelenideElement input, String city) {
-        input.click();
+    private void chooseCity(SelenideElement input, String fieldName, String city) {
+        typeCity(input, fieldName, city.substring(0, city.length() - 1));
+        SelenideElement suggestion = suggestions.findBy(text(city));
+        if (appears(suggestion, visible, SUGGESTIONS_TIMEOUT)) {
+            suggestion.click();
+        }
+        input.shouldHave(value(city));
+    }
+
+    private void typeCity(SelenideElement input, String fieldName, String city) {
+        openPanel(input, focusedInput, attributeMatching("data-test-id", ".*" + fieldName + ".*"));
         actions().keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL)
                 .sendKeys(Keys.BACK_SPACE)
                 .perform();

@@ -21,18 +21,16 @@ public class TestBase {
 
     @BeforeAll
     static void setUpOptions() {
+        Configuration.pageLoadStrategy = "normal";
+        Configuration.timeout = 10_000;
+        Configuration.pageLoadTimeout = 30_000;
         ChromeOptions chromeOptions = new ChromeOptions();
-
-        //  options.setCapability("browserVersion", "128.0"); // Укажите актуальную версию из вашего Selenoid
         chromeOptions.addArguments("--disable-features=AutoDeElevate");
         Configuration.browserCapabilities = chromeOptions;
         Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
         Configuration.baseUrl = webConfig.baseUrl();
         Configuration.browserSize = "1920x1080";
         Configuration.pageLoadStrategy = "eager";
-
-        //   Configuration.timeout = 10000;
-// Configuration.pageLoadTimeout = 30000;
 
         chromeOptions.addArguments("--disable-dev-shm-usage", "--no-sandbox");
         chromeOptions.setCapability("se:cdpEnabled", false);
@@ -42,10 +40,10 @@ public class TestBase {
         ));
     }
 
-    @BeforeEach
-    void setUpUrl() {
-        open(webConfig.baseUrl());
-    }
+//    @BeforeEach
+//    void setUpUrl() {
+//        open(webConfig.baseUrl());
+//    }
 
     @AfterEach
     void addAttachments() {

@@ -1,78 +1,109 @@
 package api.clients;
 
-import api.config.ApiConfig;
+import api.data.AuthData;
 import api.models.booker.AuthRequest;
+import api.models.booker.AuthResponse;
 import api.models.booker.Booking;
+import api.models.booker.BookingPatchRequest;
+import api.models.booker.BookingResponse;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.aeonbits.owner.ConfigFactory;
-
-import java.util.Map;
 
 import static api.specs.ApiSpecs.bookerRequestSpec;
+import static api.specs.ApiSpecs.successResponseSpec;
 import static io.restassured.RestAssured.given;
 
 public class BookerApi {
 
-    private static final ApiConfig config = ConfigFactory.create(ApiConfig.class, System.getProperties());
+    private static final String AUTH = "/auth";
+    private static final String BOOKING = "/booking";
+    private static final String BOOKING_BY_ID = "/booking/{id}";
 
-    @Step("POST /auth — получить токен")
-    public Response createToken(AuthRequest authRequest) {
-        return given()
-                .spec(bookerRequestSpec)
+    @Step("Получить токен авторизации")
+    public AuthResponse createToken(AuthRequest authRequest) {
+        return given().spec(bookerRequestSpec)
                 .body(authRequest)
                 .when()
-                .post("/auth");
+                .post(AUTH)
+                .then()
+                .spec(successResponseSpec)
+                .extract().as(AuthResponse.class);
     }
 
     @Step("Получить токен администратора")
     public String adminToken() {
-        AuthRequest admin = AuthRequest.builder()
-                .username(config.bookerUsername())
-                .password(config.bookerPassword())
-                .build();
-        return createToken(admin).path("token");
+        return createToken(AuthData.adminCredentials()).getToken();
     }
 
-    @Step("POST /booking — создать бронирование")
-    public Response createBooking(Booking booking) {
-        return given()
-                .spec(bookerRequestSpec)
+    @Step("Создать бронирование")
+    public BookingResponse createBooking(Booking booking) {
+        return given().spec(bookerRequestSpec)
                 .body(booking)
                 .when()
-                .post("/booking");
+                .post(BOOKING)
+                .then()
+                .spec(successResponseSpec)
+                .extract().as(BookingResponse.class);
     }
 
-    @Step("GET /booking/{bookingId} — получить бронирование")
-    public Response getBooking(int bookingId) {
-        return given()
-                .spec(bookerRequestSpec)
-                .when()
-                .get("/booking/{id}", bookingId);
+    @Step("Получить бронирование {bookingId}")
+    public Booking getBooking(int bookingId) {
+        return sendGet(bookingId)
+                .then()
+                .spec(successResponseSpec)
+                .extract().as(Booking.class);
     }
 
-    @Step("PUT /booking/{bookingId} — полностью обновить бронирование")
-    public Response updateBooking(int bookingId, Booking booking, String token) {
+    @Step("Запросить бронирование {bookingId} без проверки ответа")
+    public Response getBookingRaw(int bookingId) {
+        return sendGet(bookingId);
+    }
+
+    @Step("Полностью обновить бронирование {bookingId}")
+    public Booking updateBooking(int bookingId, Booking booking, String token) {
         return withToken(token)
                 .body(booking)
                 .when()
-                .put("/booking/{id}", bookingId);
+                .put(BOOKING_BY_ID, bookingId)
+                .then()
+                .spec(successResponseSpec)
+                .extract().as(Booking.class);
     }
 
-    @Step("PATCH /booking/{bookingId} — частично обновить бронирование")
-    public Response partialUpdateBooking(int bookingId, Map<String, Object> fields, String token) {
+    @Step("Частично обновить бронирование {bookingId}")
+    public Booking partialUpdateBooking(int bookingId, BookingPatchRequest patch, String token) {
         return withToken(token)
-                .body(fields)
+                .body(patch)
                 .when()
-                .patch("/booking/{id}", bookingId);
+                .patch(BOOKING_BY_ID, bookingId)
+                .then()
+                .spec(successResponseSpec)
+                .extract().as(Booking.class);
     }
 
-    @Step("DELETE /booking/{bookingId} — удалить бронирование")
-    public Response deleteBooking(int bookingId, String token) {
+    @Step("Удалить бронирование {bookingId}")
+    public void deleteBooking(int bookingId, String token) {
+        sendDelete(bookingId, token)
+                .then()
+                .statusCode(201);
+    }
+
+    @Step("Отправить удаление бронирования {bookingId} без проверки ответа")
+    public Response deleteBookingRaw(int bookingId, String token) {
+        return sendDelete(bookingId, token);
+    }
+
+    private Response sendGet(int bookingId) {
+        return given().spec(bookerRequestSpec)
+                .when()
+                .get(BOOKING_BY_ID, bookingId);
+    }
+
+    private Response sendDelete(int bookingId, String token) {
         return withToken(token)
                 .when()
-                .delete("/booking/{id}", bookingId);
+                .delete(BOOKING_BY_ID, bookingId);
     }
 
     private RequestSpecification withToken(String token) {

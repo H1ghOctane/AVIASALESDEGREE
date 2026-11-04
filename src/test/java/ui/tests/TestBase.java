@@ -1,14 +1,16 @@
 package ui.tests;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.logevents.SelenideLogger;
-import io.qameta.allure.selenide.AllureSelenide;
+import com.codeborne.selenide.Selenide;
+import ui.helpers.Attach;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.chrome.ChromeOptions;
 import ui.config.WebConfig;
+
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
@@ -18,31 +20,26 @@ public class TestBase {
     private static final WebConfig webConfig = ConfigFactory.create(WebConfig.class, System.getProperties());
 
     @BeforeAll
-    static void setUp() {
-        SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
-                .screenshots(true)
-                .savePageSource(true)
-                .includeSelenideSteps(true)
-        );
+    static void setUpOptions() {
+        ChromeOptions chromeOptions = new ChromeOptions();
 
+        //  options.setCapability("browserVersion", "128.0"); // Укажите актуальную версию из вашего Selenoid
+        chromeOptions.addArguments("--disable-features=AutoDeElevate");
+        Configuration.browserCapabilities = chromeOptions;
+        Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
+        Configuration.baseUrl = webConfig.baseUrl();
         Configuration.browserSize = "1920x1080";
-        Configuration.timeout = 5_000;
-        Configuration.pageLoadTimeout = 20_000;
         Configuration.pageLoadStrategy = "eager";
 
-        ChromeOptions options = new ChromeOptions();
+        //   Configuration.timeout = 10000;
+// Configuration.pageLoadTimeout = 30000;
 
-        String chromeBinary = System.getProperty("chrome.binary");
-        if (chromeBinary != null && !chromeBinary.isEmpty()) {
-            options.setBinary(chromeBinary);
-        }
-
-        options.addArguments("--headless=new");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--disable-blink-features=AutomationControlled");
-        Configuration.browserCapabilities = options;
+        chromeOptions.addArguments("--disable-dev-shm-usage", "--no-sandbox");
+        chromeOptions.setCapability("se:cdpEnabled", false);
+        chromeOptions.setCapability("selenoid:options", Map.of(
+                "enableVNC", true,
+                "enableVideo", true
+        ));
     }
 
     @BeforeEach
@@ -51,7 +48,12 @@ public class TestBase {
     }
 
     @AfterEach
-    void tearDown() {
-        closeWebDriver();
+    void addAttachments() {
+        if (Selenide.webdriver().driver().hasWebDriverStarted()) {
+            Attach.screenshotAs("Last screenshot");
+            Attach.pageSource();
+            Attach.addVideo();
+            closeWebDriver();
+        }
     }
 }

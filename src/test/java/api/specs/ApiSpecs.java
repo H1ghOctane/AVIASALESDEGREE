@@ -1,22 +1,29 @@
 package api.specs;
 
 import api.config.ApiConfig;
+import api.config.ApiConfigProvider;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import org.aeonbits.owner.ConfigFactory;
 
 import static api.helpers.CustomAllureListener.withCustomTemplates;
 
-public class ApiSpecs {
+public final class ApiSpecs {
 
-    private static final ApiConfig config = ConfigFactory.create(ApiConfig.class, System.getProperties());
+    private static final ApiConfig config = ApiConfigProvider.CONFIG;
 
-    public static final RequestSpecification travelpayoutsRequestSpec = baseRequestSpec(config.travelpayoutsBaseUrl());
+    public static final RequestSpecification travelpayoutsRequestSpec =
+            baseRequestSpec(config.travelpayoutsBaseUrl());
 
-    public static final RequestSpecification bookerRequestSpec = baseRequestSpec(config.bookerBaseUrl());
+    public static final RequestSpecification bookerRequestSpec =
+            baseRequestSpec(config.bookerBaseUrl());
+
+    public static final ResponseSpecification successResponseSpec = new ResponseSpecBuilder()
+            .expectStatusCode(200)
+            .expectContentType(ContentType.JSON)
+            .build();
 
     private ApiSpecs() {
     }
@@ -25,12 +32,6 @@ public class ApiSpecs {
         return new RequestSpecBuilder()
                 .addRequestSpecification(travelpayoutsRequestSpec)
                 .addHeader("X-Access-Token", config.travelpayoutsToken())
-                .build();
-    }
-
-    public static ResponseSpecification responseSpec(int statusCode) {
-        return new ResponseSpecBuilder()
-                .expectStatusCode(statusCode)
                 .build();
     }
 

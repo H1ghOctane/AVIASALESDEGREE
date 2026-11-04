@@ -30,8 +30,8 @@ public class TestBase {
     //    Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
         Configuration.baseUrl = webConfig.baseUrl();
         Configuration.browserSize = "1920x1080";
-        Configuration.pageLoadStrategy = "eager";
-
+        //   Configuration.pageLoadStrategy = "eager";
+        Configuration.remote = webConfig.remoteUrl();
         chromeOptions.addArguments("--disable-dev-shm-usage", "--no-sandbox");
         chromeOptions.setCapability("se:cdpEnabled", false);
         chromeOptions.setCapability("selenoid:options", Map.of(

@@ -2,18 +2,20 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'TASK', choices: ['test', 'api', 'ui'], description: 'Gradle-задача: test — все тесты, api — API, ui — UI')
-        password(name: 'TRAVELPAYOUTS_TOKEN', defaultValue: '', description: 'Токен Travelpayouts. Пусто — тесты цен будут пропущены')
-        string(name: 'BROWSER', defaultValue: 'chrome', description: 'Браузер')
-        string(name: 'BROWSER_VERSION', defaultValue: '128.0', description: 'Версия браузера')
-        string(name: 'BROWSER_SIZE', defaultValue: '1920x1080', description: 'Размер окна браузера')
-        booleanParam(name: 'HEADLESS', defaultValue: true, description: 'Headless для браузера на самом агенте Jenkins (без Selenoid)')
-        password(name: 'REMOTE_URL', defaultValue: '', description: 'Адрес Selenoid с логином и паролем: https://user:pass@host/wd/hub. Пусто — браузер на агенте')
-        string(name: 'VIDEO_STORAGE', defaultValue: '', description: 'Адрес папки с видео Selenoid: https://host/video/. Пусто — без видео')
+        choice(name: 'TASK', choices: ['test', 'api', 'ui'],
+                description: 'Что запускать: test — все тесты, api — только API, ui — только UI')
+        choice(name: 'BROWSER', choices: ['chrome:157.0', 'chrome:156.0', 'firefox:140.0'],
+                description: 'Браузер и версия в Selenoid (список — с selenoid.qa.guru)')
+        choice(name: 'BROWSER_SIZE', choices: ['1920x1080', '1366x768', '1280x800'],
+                description: 'Размер окна браузера')
+        password(name: 'REMOTE_URL', defaultValue: '',
+                description: 'Selenoid с логином и паролем: https://user:password@selenoid.qa.guru/wd/hub')
+        password(name: 'TRAVELPAYOUTS_TOKEN', defaultValue: '',
+                description: 'Токен Travelpayouts. Пусто — тесты цен будут пропущены')
     }
 
     options {
-        timeout(time: 20, unit: 'MINUTES')
+        timeout(time: 30, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
     }
@@ -21,16 +23,16 @@ pipeline {
     stages {
         stage('Run tests') {
             steps {
-                // TRAVELPAYOUTS_TOKEN и REMOTE_URL не передаются через -D: Jenkins печатает команду целиком.
+                // REMOTE_URL и TRAVELPAYOUTS_TOKEN не передаются через -D: Jenkins печатает команду в лог.
                 // Gradle берёт их из переменных окружения (см. build.gradle)
                 sh '''
                     chmod +x gradlew
-                    ./gradlew clean "$TASK" \
-                        -Dbrowser="$BROWSER" \
-                        -DbrowserVersion="$BROWSER_VERSION" \
-                        -DbrowserSize="$BROWSER_SIZE" \
-                        -Dheadless="$HEADLESS" \
-                        -DvideoStorage="$VIDEO_STORAGE"
+                    BROWSER_NAME="${BROWSER%%:*}"
+                    BROWSER_VERSION="${BROWSER##*:}"
+                    ./gradlew clean "$TASK" \\
+                        -Dbrowser="$BROWSER_NAME" \\
+                        -DbrowserVersion="$BROWSER_VERSION" \\
+                        -DbrowserSize="$BROWSER_SIZE"
                 '''
             }
         }

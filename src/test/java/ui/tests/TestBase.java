@@ -27,7 +27,7 @@ public class TestBase {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--disable-features=AutoDeElevate");
         Configuration.browserCapabilities = chromeOptions;
-        Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
+    //    Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
         Configuration.baseUrl = webConfig.baseUrl();
         Configuration.browserSize = "1920x1080";
         Configuration.pageLoadStrategy = "eager";

@@ -19,10 +19,11 @@ import static ui.data.SearchData.departDate;
 public class SearchFiltersTest extends TestBase {
 
     private final MainPage mainPage = new MainPage();
-    @Disabled
+
     @Test
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Фильтр «Без пересадок» оставляет в выдаче только прямые рейсы")
+
     void directFlightsFilterTest() {
         mainPage.openPage()
                 .setOrigin(MOSCOW.getTitle())

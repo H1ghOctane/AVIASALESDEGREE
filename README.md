@@ -1,8 +1,32 @@
 <h1 align="center">Автотесты для <a href="https://www.aviasales.ru">Aviasales</a></h1>
 
+
+
+
+
+
+
+
 <p align="center">
-  <a href="https://www.aviasales.ru"><img src="images/logo/aviasales.svg" width="320" alt="Aviasales"></a>
+  <a href="https://www.aviasales.ru"><img src="images/logo/aviasales_ru_horizontal_all_white.svg" alt="Aviasales"></a>
 </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Дипломный проект QA.GURU. В репозитории UI-тесты сайта [aviasales.ru](https://www.aviasales.ru) и API-тесты двух сервисов: справочников и цен [Travelpayouts](https://support.travelpayouts.com/hc/ru/articles/203956163) (API Aviasales) и учебного API [Restful-booker](https://restful-booker.herokuapp.com/apidoc/index.html). Мобильные тесты лежат отдельно, в репозитории [MOBILEREST](https://github.com/H1ghOctane/MOBILEREST)
 

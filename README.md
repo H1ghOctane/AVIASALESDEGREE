@@ -127,7 +127,8 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 ## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/)
 
-<img src="images/logo/Jenkins.svg" width="200" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec"> При запуске можно выбрать набор тестов, браузер, его версию и размер окна
+<img src="images/logo/Jenkins.svg" width="100" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec"> 
+При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
 
 ## [Отчёт Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)
@@ -142,7 +143,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт
 
-<img src="images/logo/telegram.svg" width="200" alt="Уведомление в Telegram">
+<img src="images/logo/Telegram.svg" width="100" alt="Уведомление в Telegram">
 
 ## Видео прохождения теста
 

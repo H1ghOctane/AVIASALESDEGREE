@@ -127,9 +127,8 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 ## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/)
 
-При запуске можно выбрать набор тестов, браузер, его версию и размер окна
+<img src="images/logo/Jenkins.svg" width="200" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec"> При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
-<img src="images/logo/Jenkins.svg" width="450" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec">
 
 ## [Отчёт Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)
 
@@ -137,14 +136,14 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 <img src="images/allure-overview.png" alt="Главная страница отчёта Allure">
 
-<img src="images/allure-tests.png" alt="Список тестов в отчёте Allure">
+<img src="images/logo/allure-tests.png" alt="Список тестов в отчёте Allure">
 
 ## Уведомления в Telegram
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт
 
-<img src="images/telegram.jpg" width="450" alt="Уведомление в Telegram">
+<img src="images/logo/telegram.jpg" width="200" alt="Уведомление в Telegram">
 
 ## Видео прохождения теста
 
-Видео из Selenoid, тест поиска в одну сторону
+Видео из Selenoid, тест поиска в одну сторону:

@@ -125,7 +125,8 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 Токен Travelpayouts удобно положить в файл `~/aviasales.properties` строкой `travelpayouts.token=...`, тогда его не нужно передавать при каждом запуске. В Jenkins токен и адрес Selenoid передаются параметрами `TRAVELPAYOUTS_TOKEN` и `REMOTE_URL` и в лог сборки не попадают
 
-<img src="images/logo/Jenkins.svg" width="100" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec"> ## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/)
+## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/) <img src="images/logo/Jenkins.svg" width="100" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec">
+
 При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
 ## [Отчёт Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)

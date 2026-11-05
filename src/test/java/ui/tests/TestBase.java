@@ -21,7 +21,7 @@ public class TestBase {
 
     @BeforeAll
     static void setUpOptions() {
-        Configuration.pageLoadStrategy = "normal";
+        //    Configuration.pageLoadStrategy = "normal";
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 30_000;
         ChromeOptions chromeOptions = new ChromeOptions();
@@ -29,8 +29,11 @@ public class TestBase {
         Configuration.browserCapabilities = chromeOptions;
     //    Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
         Configuration.baseUrl = webConfig.baseUrl();
-        Configuration.browserSize = "1920x1080";
-        //   Configuration.pageLoadStrategy = "eager";
+        Configuration.browser = webConfig.browser();
+        Configuration.browserVersion = webConfig.browserVersion();
+        //Configuration.browserSize = "1920x1080";
+        Configuration.browserSize = webConfig.browserSize();
+        Configuration.pageLoadStrategy = "eager";
         Configuration.remote = webConfig.remoteUrl();
         chromeOptions.addArguments("--disable-dev-shm-usage", "--no-sandbox");
         chromeOptions.setCapability("se:cdpEnabled", false);

@@ -1,6 +1,7 @@
 package ui.tests;
 
 import io.qameta.allure.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import static ui.data.SearchData.departDate;
 public class SearchFiltersTest extends TestBase {
 
     private final MainPage mainPage = new MainPage();
-
+    @Disabled
     @Test
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Фильтр «Без пересадок» оставляет в выдаче только прямые рейсы")

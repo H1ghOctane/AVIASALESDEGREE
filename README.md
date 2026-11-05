@@ -129,7 +129,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
-<img src="images/jenkins.png" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec">
+<img src="images/logo/Jenkins.svg" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec">
 
 ## [Отчёт Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)
 

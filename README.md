@@ -121,6 +121,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
+<img src="images/logo/allure-report2.png" alt="Главная страница отчёта Allure">
 
 
 ## Отчет [Allure](https://jenkins.qa.guru/view/qa-guru-students/job/AVIASALESDEGREE/1/allure/)
@@ -134,6 +135,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 ## Уведомления в Telegram 
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт
+
 <img src="images/logo/img_telegram.png" alt="Отчет в телеграмм">
 
 

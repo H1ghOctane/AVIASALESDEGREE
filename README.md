@@ -7,6 +7,8 @@
 Дипломный проект QA.GURU. В репозитории UI-тесты сайта [aviasales.ru](https://www.aviasales.ru) и API-тесты двух сервисов: справочников и цен [Travelpayouts](https://support.travelpayouts.com/hc/ru/articles/203956163) (API Aviasales) и учебного API [Restful-booker](https://restful-booker.herokuapp.com/apidoc/index.html). Мобильные тесты лежат отдельно, в репозитории [MOBILEREST](https://github.com/H1ghOctane/MOBILEREST)
 
 ## Содержание
+✅ Стек
+<a id="tools"></a>
 
 - [Технологии и инструменты](#технологии-и-инструменты)
 - [Что проверяют тесты](#что-проверяют-тесты)
@@ -136,3 +138,5 @@ UI-тесты по умолчанию открывают Chrome на своём 
 ## Видео прохождения теста
 
 Видео из Selenoid, тест поиска в одну сторону:
+### Успешная сборка в Jenkins (UI)
+https://jenkins.qa.guru/job/UI-TESTS-H1GHOCTANE/2/allure/#behaviors/47feb2ef721e1fc00921e74ad081fcb4/ea03a0b71e9904d7/

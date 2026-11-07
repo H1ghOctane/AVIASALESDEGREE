@@ -117,21 +117,24 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 Токен Travelpayouts удобно положить в файл `~/aviasales.properties` строкой `travelpayouts.token=...`, тогда его не нужно передавать при каждом запуске. В Jenkins токен и адрес Selenoid передаются параметрами `TRAVELPAYOUTS_TOKEN` и `REMOTE_URL` и в лог сборки не попадают
 
-## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/) 
+## Сборка в [Jenkins](https://jenkins.qa.guru/view/qa-guru-students/job/AVIASALESDEGREE/)
 
 При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
-## Отчет [Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)
+
+
+## Отчет [Allure](https://jenkins.qa.guru/view/qa-guru-students/job/AVIASALESDEGREE/1/allure/)
 
 В отчёте у каждого шага есть вложения. У API-тестов это запрос и ответ, токены в них скрыты. У UI-тестов это скриншот, исходный код страницы, лог консоли браузера и видео из Selenoid
 
-<img src="images/logo/allure-overview.svg" alt="Главная страница отчёта Allure">
+<img src="images/logo/allure-report2.png" alt="Главная страница отчёта Allure">
 
-<img src="images/logo/allure-tests.svg" alt="Список тестов в отчёте Allure">
+<img src="images/logo/allure-report3.png" alt="Список тестов в отчёте Allure">
 
 ## Уведомления в Telegram 
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт
+<img src="images/logo/img_telegram.png" alt="Отчет в телеграмм">
 
 
 ## Видео прохождения UI теста

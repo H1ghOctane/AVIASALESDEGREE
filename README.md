@@ -1,32 +1,8 @@
 <h1 align="center">Автотесты для <a href="https://www.aviasales.ru">Aviasales</a></h1>
 
-
-
-
-
-
-
-
 <p align="center">
-  <a href="https://www.aviasales.ru"><img src="images/logo/aviasales_ru_horizontal_all_white.svg" alt="Aviasales"></a>
+  <a href="https://www.aviasales.ru"><img src="images/logo/photo_2026-11-05_16-43-23.png" alt="Aviasales"></a>
 </p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Дипломный проект QA.GURU. В репозитории UI-тесты сайта [aviasales.ru](https://www.aviasales.ru) и API-тесты двух сервисов: справочников и цен [Travelpayouts](https://support.travelpayouts.com/hc/ru/articles/203956163) (API Aviasales) и учебного API [Restful-booker](https://restful-booker.herokuapp.com/apidoc/index.html). Мобильные тесты лежат отдельно, в репозитории [MOBILEREST](https://github.com/H1ghOctane/MOBILEREST)
 
@@ -149,26 +125,23 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 Токен Travelpayouts удобно положить в файл `~/aviasales.properties` строкой `travelpayouts.token=...`, тогда его не нужно передавать при каждом запуске. В Jenkins токен и адрес Selenoid передаются параметрами `TRAVELPAYOUTS_TOKEN` и `REMOTE_URL` и в лог сборки не попадают
 
-## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/)
+## Сборка в [Jenkins](https://jenkins.qa.guru/job/degree_pravki/)  <img src="images/logo/Jenkins.svg" width="100" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec">
 
 При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
-<img src="images/logo/Jenkins.svg" width="450" alt="https://jenkins.qa.guru/view/qa-guru-students/job/degree_pravki/build?delay=0sec">
-
-## [Отчёт Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)
+## Отчет [Allure](https://jenkins.qa.guru/job/degree_pravki/lastCompletedBuild/allure/)
 
 В отчёте у каждого шага есть вложения. У API-тестов это запрос и ответ, токены в них скрыты. У UI-тестов это скриншот, исходный код страницы, лог консоли браузера и видео из Selenoid
 
-<img src="images/allure-overview.png" alt="Главная страница отчёта Allure">
+<img src="images/logo/allure-overview.svg" alt="Главная страница отчёта Allure">
 
-<img src="images/allure-tests.png" alt="Список тестов в отчёте Allure">
+<img src="images/logo/allure-tests.svg" alt="Список тестов в отчёте Allure">
 
-## Уведомления в Telegram
+## Уведомления в Telegram   <img src="images/logo/Telegram.svg" width="100" alt="Уведомление в Telegram">
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт
 
-<img src="images/telegram.jpg" width="450" alt="Уведомление в Telegram">
 
 ## Видео прохождения теста
 
-Видео из Selenoid, тест поиска в одну сторону
+Видео из Selenoid, тест поиска в одну сторону:

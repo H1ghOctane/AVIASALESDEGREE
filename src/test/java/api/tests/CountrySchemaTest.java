@@ -1,14 +1,19 @@
 package api.tests;
 
-import io.qameta.allure.*;
+import api.clients.GeoApi;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static api.specs.ApiSpecs.responseSpec;
-import static api.specs.ApiSpecs.travelpayoutsRequestSpec;
-import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.HamcrestCondition.matching;
 
 @Epic("Aviasales API")
 @Feature("Справочники")
@@ -17,16 +22,14 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInC
 @Tag("api")
 public class CountrySchemaTest {
 
+    private final GeoApi geoApi = new GeoApi();
+
     @Test
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("GET /data/ru/countries.json — ответ соответствует JSON-схеме")
     void countriesResponseMatchesSchemaTest() {
-        given()
-                .spec(travelpayoutsRequestSpec)
-                .when()
-                .get("/data/ru/countries.json")
-                .then()
-                .spec(responseSpec(200))
-                .body(matchesJsonSchemaInClasspath("schemas/countries-schema.json"));
+        String json = geoApi.getCountriesJson();
+
+        assertThat(json).is(matching(matchesJsonSchemaInClasspath("schemas/countries-schema.json")));
     }
 }

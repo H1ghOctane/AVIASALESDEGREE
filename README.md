@@ -139,10 +139,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 ## Видео прохождения UI теста
 
-Видео из Selenoid, ошибка при вводе одинаковых городов «Укажите разные города»:
-
-https://github.com/H1ghOctane/AVIASALESDEGREE/issues/3
-
+Видео из Selenoid, ошибка при вводе одинаковых городов «Укажите разные города»
 
 https://github.com/user-attachments/assets/c07271ff-e913-43c7-afe1-7fcf4f5a546a
 

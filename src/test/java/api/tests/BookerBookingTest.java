@@ -2,20 +2,23 @@ package api.tests;
 
 import api.clients.BookerApi;
 import api.models.booker.Booking;
+import api.models.booker.BookingPatchRequest;
 import api.models.booker.BookingResponse;
-import io.qameta.allure.*;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Map;
-
 import static api.data.BookingData.randomBooking;
-import static api.specs.ApiSpecs.responseSpec;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 @Epic("Restful-booker API")
 @Feature("Бронирования")
@@ -32,11 +35,7 @@ public class BookerBookingTest {
     void createBookingTest() {
         Booking booking = randomBooking();
 
-        BookingResponse response = api.createBooking(booking)
-                .then()
-                .spec(responseSpec(200))
-                .body("booking.firstname", equalTo(booking.getFirstname()))
-                .extract().as(BookingResponse.class);
+        BookingResponse response = api.createBooking(booking);
 
         assertThat(response.getBookingid()).isPositive();
         assertThat(response.getBooking()).isEqualTo(booking);
@@ -48,13 +47,9 @@ public class BookerBookingTest {
     @DisplayName("GET /booking/{id} — возвращает созданное бронирование")
     void getBookingTest() {
         Booking booking = randomBooking();
-        int bookingId = createBooking(booking);
+        int bookingId = api.createBooking(booking).getBookingid();
 
-        Booking received = api.getBooking(bookingId)
-                .then()
-                .spec(responseSpec(200))
-                .body("lastname", equalTo(booking.getLastname()))
-                .extract().as(Booking.class);
+        Booking received = api.getBooking(bookingId);
 
         assertThat(received).isEqualTo(booking);
     }
@@ -64,15 +59,10 @@ public class BookerBookingTest {
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("PUT /booking/{id} — бронирование полностью обновляется")
     void updateBookingTest() {
-        int bookingId = createBooking(randomBooking());
+        int bookingId = api.createBooking(randomBooking()).getBookingid();
         Booking updated = randomBooking();
-        updated.setAdditionalneeds("Dinner");
 
-        Booking received = api.updateBooking(bookingId, updated, api.adminToken())
-                .then()
-                .spec(responseSpec(200))
-                .body("additionalneeds", equalTo("Dinner"))
-                .extract().as(Booking.class);
+        Booking received = api.updateBooking(bookingId, updated, api.adminToken());
 
         assertThat(received).isEqualTo(updated);
     }
@@ -83,16 +73,18 @@ public class BookerBookingTest {
     @DisplayName("PATCH /booking/{id} — меняется только переданное поле")
     void partialUpdateBookingTest() {
         Booking booking = randomBooking();
-        int bookingId = createBooking(booking);
+        int bookingId = api.createBooking(booking).getBookingid();
+        BookingPatchRequest patch = BookingPatchRequest.builder()
+                .firstname("Updated")
+                .build();
 
-        Booking received = api.partialUpdateBooking(bookingId, Map.of("firstname", "Updated"), api.adminToken())
-                .then()
-                .spec(responseSpec(200))
-                .body("firstname", equalTo("Updated"))
-                .extract().as(Booking.class);
+        Booking received = api.partialUpdateBooking(bookingId, patch, api.adminToken());
 
-        assertThat(received.getLastname()).isEqualTo(booking.getLastname());
-        assertThat(received.getTotalprice()).isEqualTo(booking.getTotalprice());
+        assertThat(received.getFirstname()).isEqualTo("Updated");
+        assertThat(received)
+                .usingRecursiveComparison()
+                .ignoringFields("firstname")
+                .isEqualTo(booking);
     }
 
     @Test
@@ -100,15 +92,11 @@ public class BookerBookingTest {
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("DELETE /booking/{id} — бронирование удаляется")
     void deleteBookingTest() {
-        int bookingId = createBooking(randomBooking());
+        int bookingId = api.createBooking(randomBooking()).getBookingid();
 
-        api.deleteBooking(bookingId, api.adminToken())
-                .then()
-                .spec(responseSpec(201));
+        api.deleteBooking(bookingId, api.adminToken());
 
-        api.getBooking(bookingId)
-                .then()
-                .spec(responseSpec(404));
+        assertThat(api.getBookingRaw(bookingId).statusCode()).isEqualTo(404);
     }
 
     @Test
@@ -116,15 +104,13 @@ public class BookerBookingTest {
     @Severity(SeverityLevel.NORMAL)
     @DisplayName("DELETE /booking/{id} без токена — 403, бронирование остаётся")
     void deleteBookingWithoutTokenTest() {
-        int bookingId = createBooking(randomBooking());
+        Booking booking = randomBooking();
+        int bookingId = api.createBooking(booking).getBookingid();
 
-        api.deleteBooking(bookingId, null)
-                .then()
-                .spec(responseSpec(403));
+        Response response = api.deleteBookingRaw(bookingId, null);
 
-        api.getBooking(bookingId)
-                .then()
-                .spec(responseSpec(200));
+        assertThat(response.statusCode()).isEqualTo(403);
+        assertThat(api.getBooking(bookingId)).isEqualTo(booking);
     }
 
     @ParameterizedTest(name = "GET /booking/{0} — бронирования не существует")
@@ -133,15 +119,6 @@ public class BookerBookingTest {
     @Severity(SeverityLevel.NORMAL)
     @DisplayName("GET /booking/{id} несуществующего бронирования — 404")
     void getNonExistingBookingTest(int bookingId) {
-        api.getBooking(bookingId)
-                .then()
-                .spec(responseSpec(404));
-    }
-
-    private int createBooking(Booking booking) {
-        return api.createBooking(booking)
-                .then()
-                .spec(responseSpec(200))
-                .extract().path("bookingid");
+        assertThat(api.getBookingRaw(bookingId).statusCode()).isEqualTo(404);
     }
 }

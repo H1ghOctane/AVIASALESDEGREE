@@ -1,17 +1,18 @@
 package api.tests;
 
+import api.clients.GeoApi;
 import api.models.Country;
-import io.qameta.allure.*;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.List;
-
-import static api.specs.ApiSpecs.responseSpec;
-import static api.specs.ApiSpecs.travelpayoutsRequestSpec;
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Epic("Aviasales API")
@@ -20,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Owner("H1ghOctane")
 @Tag("api")
 public class CountrySearchTest {
+
+    private final GeoApi geoApi = new GeoApi();
 
     @ParameterizedTest(name = "Список содержит страну {0} с кодом {1}")
     @CsvSource({
@@ -30,18 +33,8 @@ public class CountrySearchTest {
     @Severity(SeverityLevel.NORMAL)
     @DisplayName("GET /data/ru/countries.json — список содержит страну")
     void listContainsCountryTest(String name, String code) {
-        List<Country> countries = given()
-                .spec(travelpayoutsRequestSpec)
-                .when()
-                .get("/data/ru/countries.json")
-                .then()
-                .spec(responseSpec(200))
-                .extract()
-                .jsonPath()
-                .getList(".", Country.class);
-
-        assertThat(countries)
-                .filteredOn(country -> code.equals(country.getCode()))
+        assertThat(geoApi.getCountries())
+                .filteredOn(Country::getCode, code)
                 .extracting(Country::getName)
                 .containsExactly(name);
     }

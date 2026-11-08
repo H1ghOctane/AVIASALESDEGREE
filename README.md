@@ -129,6 +129,8 @@ UI-тесты по умолчанию открывают Chrome на своём 
 В отчёте у каждого шага есть вложения. У API-тестов это запрос и ответ, токены в них скрыты. У UI-тестов это скриншот, исходный код страницы, лог консоли браузера и видео из Selenoid
 <img src="images/logo/allure-report1.png" alt="Список тестов в отчёте Allure">
 
+<img src="images/logo/tata.png" alt="тесты Allure">
+
 <img src="images/logo/allure-report3.png" alt="Графики в отчёте Allure">
 
 ## Уведомления в Telegram 

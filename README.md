@@ -133,6 +133,17 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 <img src="images/logo/allure-report3.png" alt="Графики в отчёте Allure">
 
+## Интеграция [AllureTestOps](https://allure.qa.guru/project/5421/dashboards/5709)
+
+<img src="images/logo/testOps2.png" alt="Графики в отчёте Allure">
+
+Автоматизированные и ручные тест-кейсы
+<img src="images/logo/testOpsTests.png" alt="Графики в отчёте Allure">
+
+## Интеграция с [Jira](https://jira.qa.guru/browse/NEWAPP-9)
+
+<img src="images/logo/imgJira.png" alt="Задача Jira">
+
 ## Уведомления в Telegram 
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт

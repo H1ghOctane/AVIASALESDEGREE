@@ -14,6 +14,8 @@
 - [Запуск](#запуск)
 - [Сборка в Jenkins](#сборка-в-jenkins)
 - [Отчёт Allure](#отчёт-allure)
+- [Интеграция AllureTestOps](#интеграция-alluretestops)
+- [Интеграция с Jira](#интеграция-с-jira)
 - [Уведомления в Telegram](#уведомления-в-telegram)
 - [Видео прохождения теста](#видео-прохождения-теста)
 
@@ -137,7 +139,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 <img src="images/logo/testOps2.png" alt="Графики в отчёте Allure">
 
-Автоматизированные и ручные тест-кейсы
+Автоматизированные и ручные тест-кейсы:
 <img src="images/logo/testOpsTests.png" alt="Графики в отчёте Allure">
 
 ## Интеграция с [Jira](https://jira.qa.guru/browse/NEWAPP-9)

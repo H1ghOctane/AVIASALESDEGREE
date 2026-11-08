@@ -1,11 +1,7 @@
 package api.clients;
 
 import api.data.AuthData;
-import api.models.booker.AuthRequest;
-import api.models.booker.AuthResponse;
-import api.models.booker.Booking;
-import api.models.booker.BookingPatchRequest;
-import api.models.booker.BookingResponse;
+import api.models.booker.*;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;

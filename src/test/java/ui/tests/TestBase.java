@@ -2,18 +2,16 @@ package ui.tests;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import ui.helpers.Attach;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.chrome.ChromeOptions;
 import ui.config.WebConfig;
+import ui.helpers.Attach;
 
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.closeWebDriver;
-import static com.codeborne.selenide.Selenide.open;
 
 public class TestBase {
 
@@ -21,17 +19,14 @@ public class TestBase {
 
     @BeforeAll
     static void setUpOptions() {
-        //    Configuration.pageLoadStrategy = "normal";
         Configuration.timeout = 10_000;
         Configuration.pageLoadTimeout = 30_000;
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--disable-features=AutoDeElevate");
         Configuration.browserCapabilities = chromeOptions;
-    //    Configuration.remote = "https://user1:1234@selenoid.qa.guru/wd/hub";
         Configuration.baseUrl = webConfig.baseUrl();
         Configuration.browser = webConfig.browser();
         Configuration.browserVersion = webConfig.browserVersion();
-        //Configuration.browserSize = "1920x1080";
         Configuration.browserSize = webConfig.browserSize();
         Configuration.pageLoadStrategy = "eager";
         Configuration.remote = webConfig.remoteUrl();
@@ -42,11 +37,6 @@ public class TestBase {
                 "enableVideo", true
         ));
     }
-
-//    @BeforeEach
-//    void setUpUrl() {
-//        open(webConfig.baseUrl());
-//    }
 
     @AfterEach
     void addAttachments() {

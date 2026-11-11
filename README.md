@@ -112,34 +112,36 @@ UI-тесты по умолчанию открывают Chrome на своём 
 
 При запуске можно выбрать набор тестов, браузер, его версию и размер окна
 
-<img src="images/logo/allure-report2.png" alt="Главная страница отчёта Allure">
+<img src="images/logo3/imgJankins.png" alt="Главная страница отчёта Allure">
 
 
-## Отчёт [Allure](https://jenkins.qa.guru/view/qa-guru-students/job/AVIASALESDEGREE/allure/)
+## Отчёт [Allure](https://jenkins.qa.guru/job/AVIASALESDEGREE/3/allure/)
 
 В отчёте у каждого шага есть вложения. У API-тестов это запрос и ответ, токены в них скрыты. У UI-тестов это скриншот, исходный код страницы, лог консоли браузера (в Chrome) и видео из Selenoid
-<img src="images/logo/allure-report1.png" alt="Список тестов в отчёте Allure">
+<img src="images/logo3/imgAllure1.png" alt="Список тестов в отчёте Allure">
 
-<img src="images/logo/tata.png" alt="тесты Allure">
+<img src="images/logo3/imgAllure2.png" alt="тесты Allure">
 
-<img src="images/logo/allure-report3.png" alt="Графики в отчёте Allure">
+<img src="images/logo3/imgAllure3.png" alt="Графики в отчёте Allure">
 
-## Интеграция [AllureTestOps](https://allure.qa.guru/project/5421/dashboards/5709)
+## Интеграция [AllureTestOps](https://allure.qa.guru/launch/57143)
 
-<img src="images/logo/testOps2.png" alt="Графики в отчёте Allure">
+<img src="images/logo3/imgAllureTestOps1.png" alt="Графики в отчёте Allure">
+
+<img src="images/logo3/imgAllureTestOps2.png" alt="Графики в отчёте Allure">
 
 Автоматизированные и ручные тест-кейсы:
-<img src="images/logo/testOpsTests.png" alt="Графики в отчёте Allure">
+<img src="images//logo3/imgAllureTestOps3.png" alt="Графики в отчёте Allure">
 
-## Интеграция с [Jira](https://jira.qa.guru/browse/NEWAPP-9)
+## Интеграция с [Jira](https://jira.qa.guru/browse/MUL-66)
 
-<img src="images/logo/imgJira.png" alt="Задача Jira">
+<img src="images/logo3/imgJira.png" alt="Задача Jira">
 
 ## Уведомления в Telegram
 
 После каждой сборки бот присылает в чат результат прогона и ссылку на отчёт
 
-<img src="images/logo/img_telegram.png" alt="Отчет в телеграмм">
+<img src="images/logo3/imgTelegram.png" alt="Отчет в телеграмм">
 
 
 ## Видео прохождения теста

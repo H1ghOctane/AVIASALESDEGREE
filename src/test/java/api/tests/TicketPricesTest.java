@@ -58,6 +58,24 @@ public class TicketPricesTest {
     }
 
     @Test
+    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("GET /aviasales/v3/prices_for_dates — параметр direct=true возвращает только прямые рейсы")
+    void directParameterTest() {
+        PricesResponse response = pricesApi.getDirectPrices("MOW", "LED");
+
+        step("Проверить, что запрос выполнен успешно", () ->
+                assertThat(response.isSuccess()).as("success").isTrue()
+        );
+        step("Проверить, что все найденные билеты без пересадок", () ->
+                assertThat(response.getData())
+                        .as("Найденные билеты")
+                        .isNotEmpty()
+                        .extracting(TicketPrice::getTransfers)
+                        .containsOnly(0)
+        );
+    }
+
+    @Test
     @Severity(SeverityLevel.NORMAL)
     @DisplayName("GET /aviasales/v3/prices_for_dates — параметр limit ограничивает количество билетов")
     void limitParameterTest() {

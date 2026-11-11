@@ -5,11 +5,9 @@ import com.codeborne.selenide.Selenide;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.openqa.selenium.chrome.ChromeOptions;
+import ui.config.BrowserOptionsFactory;
 import ui.config.WebConfig;
 import ui.helpers.Attach;
-
-import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 
@@ -19,23 +17,16 @@ public class TestBase {
 
     @BeforeAll
     static void setUpOptions() {
-        Configuration.timeout = 10_000;
-        Configuration.pageLoadTimeout = 30_000;
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--disable-features=AutoDeElevate");
-        Configuration.browserCapabilities = chromeOptions;
         Configuration.baseUrl = webConfig.baseUrl();
         Configuration.browser = webConfig.browser();
         Configuration.browserVersion = webConfig.browserVersion();
         Configuration.browserSize = webConfig.browserSize();
-        Configuration.pageLoadStrategy = "eager";
+        Configuration.headless = webConfig.headless();
         Configuration.remote = webConfig.remoteUrl();
-        chromeOptions.addArguments("--disable-dev-shm-usage", "--no-sandbox");
-        chromeOptions.setCapability("se:cdpEnabled", false);
-        chromeOptions.setCapability("selenoid:options", Map.of(
-                "enableVNC", true,
-                "enableVideo", true
-        ));
+        Configuration.pageLoadStrategy = "eager";
+        Configuration.timeout = 10_000;
+        Configuration.pageLoadTimeout = 30_000;
+        Configuration.browserCapabilities = BrowserOptionsFactory.create(webConfig.browser(), isRemote());
     }
 
     @AfterEach
@@ -47,4 +38,9 @@ public class TestBase {
             closeWebDriver();
         }
     }
+
+    private static boolean isRemote() {
+        return TestBase.webConfig.remoteUrl() != null && !TestBase.webConfig.remoteUrl().isBlank();
+    }
 }
+

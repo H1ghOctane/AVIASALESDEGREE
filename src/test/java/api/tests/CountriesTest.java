@@ -44,4 +44,17 @@ public class CountriesTest {
                         .allSatisfy(code -> assertThat(code).hasSize(2))
         );
     }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("GET /data/ru/countries.json — коды стран не повторяются")
+    void countryCodesAreUniqueTest() {
+        List<Country> countries = geoApi.getCountries();
+
+        step("Проверить, что в списке нет двух стран с одинаковым кодом", () ->
+                assertThat(countries)
+                        .extracting(Country::getCode)
+                        .doesNotHaveDuplicates()
+        );
+    }
 }

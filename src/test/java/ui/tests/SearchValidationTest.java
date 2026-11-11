@@ -1,11 +1,15 @@
 package ui.tests;
 
+import com.codeborne.selenide.Selenide;
 import io.qameta.allure.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import ui.helpers.Attach;
 import ui.pages.MainPage;
 
+import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static ui.data.CityEnum.MOSCOW;
 import static ui.data.SearchData.departDate;
 

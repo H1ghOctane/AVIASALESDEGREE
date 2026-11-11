@@ -27,9 +27,6 @@ public interface WebConfig extends Config {
     @Key("remoteUrl")
     String remoteUrl();
 
-    @Key("videoStorage")
-    String videoStorage();
-
     @Key("headless")
     @DefaultValue("false")
     boolean headless();

@@ -19,10 +19,4 @@ public class HeaderComponent {
         menuLinks().findBy(text("Отели")).click();
         return new HotelsPage();
     }
-
-    @Step("Проверить, что в шапке есть пункт «{item}»")
-    public HeaderComponent checkMenuItemVisible(String item) {
-        menuLinks().findBy(text(item)).shouldBe(visible);
-        return this;
-    }
 }

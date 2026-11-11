@@ -38,4 +38,15 @@ public class CountrySearchTest {
                         )
         );
     }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("GET /data/ru/countries.json — у России валюта RUB")
+    void russiaCurrencyTest() {
+        String currency = geoApi.getCountryCurrency("RU");
+
+        step("Проверить, что валюта России — RUB", () ->
+                assertThat(currency).as("Валюта RU").isEqualTo("RUB")
+        );
+    }
 }

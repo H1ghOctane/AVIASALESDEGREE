@@ -26,6 +26,31 @@ public class GeoApi {
                 .extract().asString();
     }
 
+    @Step("Получить валюту страны с кодом {code}")
+    public String getCountryCurrency(String code) {
+        return requestCountries()
+                .extract().path("find { it.code == '%s' }.currency".formatted(code));
+    }
+
+    @Step("Попытаться добавить страну в справочник (POST)")
+    public int addCountry(Country country) {
+        return given().spec(travelpayoutsRequestSpec)
+                .body(country)
+                .when()
+                .post(COUNTRIES)
+                .then()
+                .extract().statusCode();
+    }
+
+    @Step("Попытаться удалить справочник стран (DELETE)")
+    public int deleteCountries() {
+        return given().spec(travelpayoutsRequestSpec)
+                .when()
+                .delete(COUNTRIES)
+                .then()
+                .extract().statusCode();
+    }
+
     private ValidatableResponse requestCountries() {
         return given().spec(travelpayoutsRequestSpec)
                 .when()

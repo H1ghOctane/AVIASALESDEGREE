@@ -42,5 +42,8 @@ public class TestBase {
     private static boolean isRemote() {
         return TestBase.webConfig.remoteUrl() != null && !TestBase.webConfig.remoteUrl().isBlank();
     }
-}
 
+    private static boolean isChrome() {
+        return "chrome".equalsIgnoreCase(webConfig.browser());
+    }
+}

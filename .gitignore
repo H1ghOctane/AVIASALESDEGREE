@@ -55,5 +55,3 @@ chromedriver.log
 ### Mac OS ###
 .DS_Store
 src/test/resources/browserstack.properties
-src/test/resources/browserstack.properties
-src/test/resources/browserstack.properties

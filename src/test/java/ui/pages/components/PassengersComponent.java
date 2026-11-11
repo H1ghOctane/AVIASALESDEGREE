@@ -24,9 +24,6 @@ public class PassengersComponent {
         close(passengersField);
     }
 
-    /**
-     * После выбора дат панель пассажиров может открыться сама, поэтому кликаем только если она закрыта
-     */
     private void open(SelenideElement passengersField) {
         if (!root.is(visible, AUTO_OPEN_TIMEOUT)) {
             passengersField.click();

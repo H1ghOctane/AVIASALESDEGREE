@@ -19,9 +19,6 @@ public enum CityEnum {
         return title;
     }
 
-    /**
-     * Начало названия, которое вводится в поле, чтобы появилась подсказка с городом
-     */
     public String getQuery() {
         return query;
     }

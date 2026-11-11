@@ -5,9 +5,7 @@ import io.qameta.allure.Step;
 
 import java.util.Map;
 
-import static api.specs.ApiSpecs.successResponseSpec;
-import static api.specs.ApiSpecs.travelpayoutsAuthorizedSpec;
-import static api.specs.ApiSpecs.travelpayoutsRequestSpec;
+import static api.specs.ApiSpecs.*;
 import static io.restassured.RestAssured.given;
 
 public class PricesApi {

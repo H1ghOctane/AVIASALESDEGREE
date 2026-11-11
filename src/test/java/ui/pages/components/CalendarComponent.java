@@ -17,10 +17,6 @@ public class CalendarComponent {
 
     private final SelenideElement actionButton = $("[data-test-id='calendar-action-button']");
 
-    /**
-     * После выбора города календарь часто открывается сам.
-     * Кликаем по полю даты только если он не открылся, один раз, без повторов
-     */
     public void openWith(SelenideElement dateField, LocalDate date) {
         SelenideElement day = day(date);
         if (!day.is(visible, AUTO_OPEN_TIMEOUT)) {
@@ -33,9 +29,6 @@ public class CalendarComponent {
         day(date).shouldBe(visible).click(usingJavaScript());
     }
 
-    /**
-     * Кнопка «Выбрать в одну сторону» есть не всегда: при выборе двух дат календарь закрывается сам
-     */
     public void confirm() {
         if (actionButton.is(visible, AUTO_OPEN_TIMEOUT)) {
             actionButton.click(usingJavaScript());

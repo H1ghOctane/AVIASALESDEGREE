@@ -131,7 +131,7 @@ UI-тесты по умолчанию открывают Chrome на своём 
 <img src="images/logo3/imgAllureTestOps2.png" alt="Графики в отчёте Allure">
 
 Автоматизированные и ручные тест-кейсы:
-<img src="images//logo3/imgAllureTestOps3.png" alt="Графики в отчёте Allure">
+<img src="images/logo3/imgAllureTestOps3.png" alt="Графики в отчёте Allure">
 
 ## Интеграция с [Jira](https://jira.qa.guru/browse/MUL-66)
 

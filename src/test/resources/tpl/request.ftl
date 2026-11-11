@@ -1,5 +1,7 @@
 <html>
 <#-- @ftlvariable name="data" type="io.qameta.allure.attachment.http.HttpRequestAttachment" -->
+<#-- Значения секретных заголовков и cookie заменяются на ***, чтобы токен не попадал в Allure-отчёт и TestOps -->
+<#assign secretNames = ["x-access-token", "authorization", "token", "cookie"]>
 <head>
 <meta charset="UTF-8">
 <style>
@@ -24,18 +26,18 @@ pre code{display:block;padding:10px;background:#f5f5f5;border-radius:4px;border:
 <#if (data.headers)?has_content>
 <h4>Headers</h4>
 <#list data.headers as name, value>
-<div><pre><code><span class="hl-header-name">${name}</span>: <span class="hl-header-value">${value}</span></code></pre></div>
+<div><pre><code><span class="hl-header-name">${name}</span>: <span class="hl-header-value"><#if secretNames?seq_contains(name?lower_case)>***<#else>${value}</#if></span></code></pre></div>
 </#list>
 </#if>
 <#if (data.cookies)?has_content>
 <h4>Cookies</h4>
 <#list data.cookies as name, value>
-<div><pre><code><span class="hl-header-name">${name}</span>: <span class="hl-header-value">${value}</span></code></pre></div>
+<div><pre><code><span class="hl-header-name">${name}</span>: <span class="hl-header-value">***</span></code></pre></div>
 </#list>
 </#if>
 <#if data.curl??>
 <h4>Curl</h4>
-<div><pre><code class="hl-curl">${data.curl}</code></pre></div>
+<div><pre><code class="hl-curl">${data.curl?replace("(?i)((x-access-token|authorization|token|cookie):\\s*)[^'\"]*", "$1***", "r")}</code></pre></div>
 </#if>
 <script>
 (function(){

@@ -34,6 +34,9 @@ public class TestBase {
         if (Selenide.webdriver().driver().hasWebDriverStarted()) {
             Attach.screenshotAs("Last screenshot");
             Attach.pageSource();
+            if (isChrome()) {
+                Attach.browserConsoleLogs();
+            }
             Attach.addVideo();
             closeWebDriver();
         }

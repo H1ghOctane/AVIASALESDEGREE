@@ -14,11 +14,12 @@ public final class ApiSpecs {
 
     private static final ApiConfig config = ApiConfigProvider.CONFIG;
 
-    public static final RequestSpecification travelpayoutsRequestSpec =
-            baseRequestSpec(config.travelpayoutsBaseUrl());
-
-    public static final RequestSpecification bookerRequestSpec =
-            baseRequestSpec(config.bookerBaseUrl());
+    public static final RequestSpecification travelpayoutsRequestSpec = new RequestSpecBuilder()
+            .setBaseUri(config.travelpayoutsBaseUrl())
+            .setContentType(ContentType.JSON)
+            .setAccept("application/json")
+            .addFilter(withCustomTemplates())
+            .build();
 
     public static final ResponseSpecification successResponseSpec = new ResponseSpecBuilder()
             .expectStatusCode(200)
@@ -32,15 +33,6 @@ public final class ApiSpecs {
         return new RequestSpecBuilder()
                 .addRequestSpecification(travelpayoutsRequestSpec)
                 .addHeader("X-Access-Token", config.travelpayoutsToken())
-                .build();
-    }
-
-    private static RequestSpecification baseRequestSpec(String baseUri) {
-        return new RequestSpecBuilder()
-                .setBaseUri(baseUri)
-                .setContentType(ContentType.JSON)
-                .setAccept("application/json")
-                .addFilter(withCustomTemplates())
                 .build();
     }
 }

@@ -4,6 +4,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
+import ui.data.CityEnum;
 import ui.pages.components.CalendarComponent;
 import ui.pages.components.HeaderComponent;
 import ui.pages.components.PassengersComponent;
@@ -14,12 +15,11 @@ import java.time.LocalDate;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.urlContaining;
-import static ui.helpers.Waits.appears;
-import static ui.helpers.Waits.openPanel;
 
 public class MainPage {
 
     private static final Duration SUGGESTIONS_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration GEO_AUTOFILL_TIMEOUT = Duration.ofSeconds(10);
 
     private final SelenideElement form = $("[data-test-id='avia-form']");
     private final SelenideElement originInput = form.$("[data-test-id='origin-input']");
@@ -32,7 +32,6 @@ public class MainPage {
     private final SelenideElement hotelsCheckbox = $("[data-test-id='hotels-checkbox']");
     private final SelenideElement submitButton = form.$("[data-test-id='form-submit']");
     private final ElementsCollection suggestions = $$("[data-test-id^='suggested-city-']");
-    private final SelenideElement focusedInput = $("input:focus");
 
     private final HeaderComponent header = new HeaderComponent();
     private final CalendarComponent calendar = new CalendarComponent();
@@ -42,6 +41,7 @@ public class MainPage {
     public MainPage openPage() {
         open("/");
         form.shouldBe(visible);
+        waitForGeoAutofill();
         return this;
     }
 
@@ -50,20 +50,20 @@ public class MainPage {
     }
 
     @Step("Указать город вылета «{city}»")
-    public MainPage setOrigin(String city) {
-        chooseCity(originInput, "origin", city);
+    public MainPage setOrigin(CityEnum city) {
+        chooseCity(originInput, city);
         return this;
     }
 
     @Step("Указать город прибытия «{city}»")
-    public MainPage setDestination(String city) {
-        chooseCity(destinationInput, "destination", city);
+    public MainPage setDestination(CityEnum city) {
+        chooseCity(destinationInput, city);
         return this;
     }
 
     @Step("Ввести в поле «Куда» начало названия «{prefix}»")
     public MainPage typeDestination(String prefix) {
-        typeCity(destinationInput, "destination", prefix);
+        typeCity(destinationInput, prefix);
         return this;
     }
 
@@ -110,9 +110,9 @@ public class MainPage {
     }
 
     @Step("Проверить города в форме: «{origin}» → «{destination}»")
-    public MainPage checkCities(String origin, String destination) {
-        originInput.shouldHave(value(origin));
-        destinationInput.shouldHave(value(destination));
+    public MainPage checkCities(CityEnum origin, CityEnum destination) {
+        originInput.shouldHave(value(origin.getTitle()));
+        destinationInput.shouldHave(value(destination.getTitle()));
         return this;
     }
 
@@ -141,22 +141,43 @@ public class MainPage {
         }
     }
 
-    private void chooseCity(SelenideElement input, String fieldName, String city) {
-        typeCity(input, fieldName, city.substring(0, city.length() - 1));
-        SelenideElement suggestion = suggestions.findBy(text(city));
-        if (appears(suggestion, visible, SUGGESTIONS_TIMEOUT)) {
-            suggestion.click();
-        }
-        input.shouldHave(value(city));
+    /**
+     * Через несколько секунд после загрузки сайт запрашивает nearest_places.json
+     * и подставляет в «Откуда» ближайший город по IP. Если начать ввод раньше,
+     * подстановка затрёт введённый тестом город. Ждём её не дольше 10 секунд;
+     * если сайт ничего не подставил, тест просто продолжается
+     */
+    private void waitForGeoAutofill() {
+        originInput.is(not(empty), GEO_AUTOFILL_TIMEOUT);
     }
 
-    private void typeCity(SelenideElement input, String fieldName, String city) {
-        openPanel(input, focusedInput, attributeMatching("data-test-id", ".*" + fieldName + ".*"));
-        actions().keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL)
-                .sendKeys(Keys.BACK_SPACE)
-                .perform();
-        if (!city.isEmpty()) {
-            actions().sendKeys(city).perform();
+    private void chooseCity(SelenideElement input, CityEnum city) {
+        typeCity(input, city.getQuery());
+        SelenideElement suggestion = suggestions.findBy(text(city.getTitle()));
+        if (suggestion.is(visible, SUGGESTIONS_TIMEOUT)) {
+            suggestion.click();
         }
+        input.shouldHave(value(city.getTitle()));
+    }
+
+    /**
+     * clear() и setValue() здесь не подходят: поле управляется React, после clear() сайт
+     * возвращает прежний город и новый текст склеивается с ним («АстанаМоскв»).
+     * Поэтому старое значение стираем обычными клавишами Backspace и Delete
+     * (они одинаково работают на Windows, Linux и macOS, в отличие от Ctrl+A / Cmd+A)
+     * и только потом вводим текст
+     */
+    private void typeCity(SelenideElement input, String text) {
+        input.click();
+        String oldValue = input.getValue();
+        if (oldValue != null && !oldValue.isEmpty()) {
+            input.sendKeys(repeat(Keys.BACK_SPACE, oldValue.length()) + repeat(Keys.DELETE, oldValue.length()));
+        }
+        input.shouldHave(exactValue(""));
+        input.sendKeys(text);
+    }
+
+    private static String repeat(Keys key, int times) {
+        return String.valueOf(key).repeat(times);
     }
 }

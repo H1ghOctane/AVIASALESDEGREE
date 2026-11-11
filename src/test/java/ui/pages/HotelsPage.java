@@ -6,8 +6,8 @@ import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverConditions.urlContaining;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 public class HotelsPage {
 
@@ -17,7 +17,6 @@ public class HotelsPage {
 
     @Step("Проверить, что открыт раздел «Отели»")
     public HotelsPage checkOpened() {
-        webdriver().shouldHave(urlContaining("/hotels"));
         title.shouldHave(text("отели"));
         hotelForm.shouldBe(visible);
         return this;

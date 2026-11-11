@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -41,15 +42,19 @@ public class TicketPricesTest {
     void pricesMatchRequestedRouteTest(String origin, String destination) {
         PricesResponse response = pricesApi.getOneWayPrices(origin, destination);
 
-        assertThat(response.isSuccess()).isTrue();
-        assertThat(response.getData())
-                .as("Найденные билеты")
-                .isNotEmpty()
-                .allSatisfy(ticket -> {
-                    assertThat(ticket.getOrigin()).isEqualTo(origin);
-                    assertThat(ticket.getDestination()).isEqualTo(destination);
-                    assertThat(ticket.getPrice()).isPositive();
-                });
+        step("Проверить, что запрос выполнен успешно", () ->
+                assertThat(response.isSuccess()).as("success").isTrue()
+        );
+        step("Проверить, что все билеты из " + origin + " в " + destination + " и с ценой больше нуля", () ->
+                assertThat(response.getData())
+                        .as("Найденные билеты")
+                        .isNotEmpty()
+                        .allSatisfy(ticket -> {
+                            assertThat(ticket.getOrigin()).isEqualTo(origin);
+                            assertThat(ticket.getDestination()).isEqualTo(destination);
+                            assertThat(ticket.getPrice()).isPositive();
+                        })
+        );
     }
 
     @Test
@@ -60,10 +65,14 @@ public class TicketPricesTest {
 
         PricesResponse response = pricesApi.getPricesFrom("MOW", limit);
 
-        assertThat(response.isSuccess()).isTrue();
-        assertThat(response.getData())
-                .hasSizeBetween(1, limit)
-                .extracting(TicketPrice::getOrigin)
-                .containsOnly("MOW");
+        step("Проверить, что запрос выполнен успешно", () ->
+                assertThat(response.isSuccess()).as("success").isTrue()
+        );
+        step("Проверить, что билетов не больше " + limit + " и все они из MOW", () ->
+                assertThat(response.getData())
+                        .hasSizeBetween(1, limit)
+                        .extracting(TicketPrice::getOrigin)
+                        .containsOnly("MOW")
+        );
     }
 }

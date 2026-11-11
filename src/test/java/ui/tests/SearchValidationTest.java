@@ -23,7 +23,7 @@ public class SearchValidationTest extends TestBase {
     @DisplayName("Поиск без города прибытия не запускается и показывает ошибку")
     void emptyDestinationTest() {
         mainPage.openPage()
-                .setOrigin(MOSCOW.getTitle())
+                .setOrigin(MOSCOW)
                 .setOneWayDate(departDate())
                 .submitInvalidSearch()
                 .checkDestinationError("Укажите город прибытия");
@@ -34,8 +34,8 @@ public class SearchValidationTest extends TestBase {
     @DisplayName("Поиск с одинаковыми городами вылета и прилёта не запускается")
     void sameCitiesTest() {
         mainPage.openPage()
-                .setOrigin(MOSCOW.getTitle())
-                .setDestination(MOSCOW.getTitle())
+                .setOrigin(MOSCOW)
+                .setDestination(MOSCOW)
                 .setOneWayDate(departDate())
                 .submitInvalidSearch()
                 .checkDestinationError("Укажите разные города");

@@ -3,6 +3,7 @@ package ui.pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import ui.data.CityEnum;
 
 import java.time.Duration;
 
@@ -29,9 +30,9 @@ public class SearchResultsPage {
     }
 
     @Step("Проверить маршрут в форме выдачи: «{origin}» → «{destination}»")
-    public SearchResultsPage checkRoute(String origin, String destination) {
-        originInput.shouldHave(value(origin));
-        destinationInput.shouldHave(value(destination));
+    public SearchResultsPage checkRoute(CityEnum origin, CityEnum destination) {
+        originInput.shouldHave(value(origin.getTitle()));
+        destinationInput.shouldHave(value(destination.getTitle()));
         return this;
     }
 

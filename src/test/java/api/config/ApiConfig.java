@@ -15,13 +15,4 @@ public interface ApiConfig extends Config {
 
     @Key("travelpayouts.token")
     String travelpayoutsToken();
-
-    @Key("booker.baseUrl")
-    String bookerBaseUrl();
-
-    @Key("booker.username")
-    String bookerUsername();
-
-    @Key("booker.password")
-    String bookerPassword();
 }

@@ -5,10 +5,13 @@ import api.models.Country;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @Epic("Aviasales API")
 @Feature("Справочники")
@@ -19,18 +22,20 @@ public class CountrySearchTest {
 
     private final GeoApi geoApi = new GeoApi();
 
-    @ParameterizedTest(name = "Список содержит страну {0} с кодом {1}")
-    @CsvSource({
-            "Россия, RU",
-            "Германия, DE",
-            "Франция, FR"
-    })
+    @Test
     @Severity(SeverityLevel.NORMAL)
-    @DisplayName("GET /data/ru/countries.json — список содержит страну")
-    void listContainsCountryTest(String name, String code) {
-        assertThat(geoApi.getCountries())
-                .filteredOn(Country::getCode, code)
-                .extracting(Country::getName)
-                .containsExactly(name);
+    @DisplayName("GET /data/ru/countries.json — в списке есть Россия, Германия и Франция с верными кодами")
+    void listContainsCountriesTest() {
+        List<Country> countries = geoApi.getCountries();
+
+        step("Проверить, что в списке есть RU — Россия, DE — Германия, FR — Франция", () ->
+                assertThat(countries)
+                        .extracting(Country::getCode, Country::getName)
+                        .contains(
+                                tuple("RU", "Россия"),
+                                tuple("DE", "Германия"),
+                                tuple("FR", "Франция")
+                        )
+        );
     }
 }

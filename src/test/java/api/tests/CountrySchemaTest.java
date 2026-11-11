@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static io.qameta.allure.Allure.step;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.HamcrestCondition.matching;
@@ -25,6 +26,8 @@ public class CountrySchemaTest {
     void countriesResponseMatchesSchemaTest() {
         String json = geoApi.getCountriesJson();
 
-        assertThat(json).is(matching(matchesJsonSchemaInClasspath("schemas/countries-schema.json")));
+        step("Проверить ответ по схеме schemas/countries-schema.json", () ->
+                assertThat(json).is(matching(matchesJsonSchemaInClasspath("schemas/countries-schema.json")))
+        );
     }
 }

@@ -7,6 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Epic("Aviasales API")
@@ -22,15 +25,23 @@ public class CountriesTest {
     @Severity(SeverityLevel.BLOCKER)
     @DisplayName("GET /data/ru/countries.json — возвращает непустой список стран")
     void countriesListIsNotEmptyTest() {
-        assertThat(geoApi.getCountries()).as("Список стран").isNotEmpty();
+        List<Country> countries = geoApi.getCountries();
+
+        step("Проверить, что список стран не пустой", () ->
+                assertThat(countries).as("Список стран").isNotEmpty()
+        );
     }
 
     @Test
     @Severity(SeverityLevel.NORMAL)
     @DisplayName("GET /data/ru/countries.json — у каждой страны двухбуквенный код")
     void countryCodesHaveTwoLettersTest() {
-        assertThat(geoApi.getCountries())
-                .extracting(Country::getCode)
-                .allSatisfy(code -> assertThat(code).hasSize(2));
+        List<Country> countries = geoApi.getCountries();
+
+        step("Проверить, что код каждой страны состоит из двух букв", () ->
+                assertThat(countries)
+                        .extracting(Country::getCode)
+                        .allSatisfy(code -> assertThat(code).hasSize(2))
+        );
     }
 }

@@ -26,12 +26,12 @@ public class SearchFormTest extends TestBase {
     @DisplayName("Поиск билетов в одну сторону открывает выдачу с введёнными городами")
     void oneWaySearchTest() {
         mainPage.openPage()
-                .setOrigin(MOSCOW.getTitle())
-                .setDestination(SAINTPETERSBURG.getTitle())
+                .setOrigin(MOSCOW)
+                .setDestination(SAINTPETERSBURG)
                 .setOneWayDate(departDate())
                 .submitSearch()
                 .checkOpened()
-                .checkRoute(MOSCOW.getTitle(), SAINTPETERSBURG.getTitle());
+                .checkRoute(MOSCOW, SAINTPETERSBURG);
     }
 
     @Test
@@ -40,13 +40,13 @@ public class SearchFormTest extends TestBase {
     @DisplayName("Поиск туда-обратно на 2 пассажиров открывает выдачу с введёнными городами")
     void roundTripSearchTest() {
         mainPage.openPage()
-                .setOrigin(MOSCOW.getTitle())
-                .setDestination(SOCHI.getTitle())
+                .setOrigin(MOSCOW)
+                .setDestination(SOCHI)
                 .setRoundTripDates(departDate(), returnDate())
                 .setAdults(2)
                 .submitSearch()
                 .checkOpened()
-                .checkRoute(MOSCOW.getTitle(), SOCHI.getTitle());
+                .checkRoute(MOSCOW, SOCHI);
     }
 
     @Test
@@ -55,10 +55,10 @@ public class SearchFormTest extends TestBase {
     @DisplayName("Кнопка смены городов меняет вылет и прилёт местами")
     void swapCitiesTest() {
         mainPage.openPage()
-                .setOrigin(MOSCOW.getTitle())
-                .setDestination(SOCHI.getTitle())
+                .setOrigin(MOSCOW)
+                .setDestination(SOCHI)
                 .swapCities()
-                .checkCities(SOCHI.getTitle(), MOSCOW.getTitle());
+                .checkCities(SOCHI, MOSCOW);
     }
 
     @ParameterizedTest(name = "По запросу «{0}» подсказывается город «{1}»")

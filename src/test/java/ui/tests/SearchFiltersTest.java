@@ -19,15 +19,15 @@ import static ui.data.SearchData.departDate;
 public class SearchFiltersTest extends TestBase {
 
     private final MainPage mainPage = new MainPage();
-    @Disabled
+
+    @Disabled("В Selenoid на выдаче Aviasales появляется капча, билеты не загружаются")
     @Test
     @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("Фильтр «Без пересадок» оставляет в выдаче только прямые рейсы")
-
+    @DisplayName("Фильтр «Прямые рейсы» оставляет в выдаче только рейсы без пересадок")
     void directFlightsFilterTest() {
         mainPage.openPage()
-                .setOrigin(MOSCOW.getTitle())
-                .setDestination(SAINTPETERSBURG.getTitle())
+                .setOrigin(MOSCOW)
+                .setDestination(SAINTPETERSBURG)
                 .setOneWayDate(departDate())
                 .submitSearch()
                 .checkOpened()
